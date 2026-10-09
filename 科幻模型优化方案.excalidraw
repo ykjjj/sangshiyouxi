@@ -1,0 +1,671 @@
+{
+    "type":  "excalidraw",
+    "version":  2,
+    "source":  "mcp-excalidraw-server",
+    "elements":  [
+                     {
+                         "id":  "mv0u17sfz5oqrzslx5a",
+                         "type":  "text",
+                         "x":  40,
+                         "y":  36,
+                         "width":  760,
+                         "height":  36,
+                         "strokeColor":  "#0A0A0A",
+                         "opacity":  100,
+                         "text":  "科幻风模型优化方案 · VOXEL ZOMBIE",
+                         "fontSize":  28,
+                         "fontFamily":  2,
+                         "createdAt":  "2026-10-09T10:38:27.859Z",
+                         "updatedAt":  "2026-10-09T10:38:27.859Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgcxqhb1ixu",
+                         "type":  "text",
+                         "x":  40,
+                         "y":  100,
+                         "width":  900,
+                         "height":  56,
+                         "strokeColor":  "#404040",
+                         "opacity":  100,
+                         "text":  "目标：为人物、7 把枪械与 7 件近战武器做科幻化重制——能量材质、发光纹路、悬浮瞄具与光刃。\n设计语言参考主流科幻射击游戏（见下方灵感参考）。",
+                         "fontSize":  16,
+                         "fontFamily":  2,
+                         "createdAt":  "2026-10-09T10:38:27.859Z",
+                         "updatedAt":  "2026-10-09T10:38:27.859Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgbx8at5uppyu",
+                         "type":  "rectangle",
+                         "x":  40,
+                         "y":  180,
+                         "width":  480,
+                         "height":  290,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "groupIds":  [
+                                          "g-char"
+                                      ],
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.928Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sgoab0q4o79o",
+                         "type":  "text",
+                         "x":  64,
+                         "y":  204,
+                         "width":  300,
+                         "height":  24,
+                         "strokeColor":  "#0A0A0A",
+                         "opacity":  100,
+                         "text":  "① 人物科幻化",
+                         "fontSize":  20,
+                         "fontFamily":  2,
+                         "groupIds":  [
+                                          "g-char"
+                                      ],
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgj50dmtpz9vn",
+                         "type":  "text",
+                         "x":  64,
+                         "y":  248,
+                         "width":  432,
+                         "height":  76,
+                         "strokeColor":  "#404040",
+                         "opacity":  100,
+                         "text":  "· 玩家手臂 → 机械义体：装甲板 + 发光关节 + 能量导管\n· 丧尸精英 / Boss：装甲发光纹路、能量核心、义眼\n· 新增科幻材质：能量青 / 等离子紫 / 纳米深灰",
+                         "fontSize":  16,
+                         "fontFamily":  2,
+                         "groupIds":  [
+                                          "g-char"
+                                      ],
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgrraegr6e9",
+                         "type":  "rectangle",
+                         "x":  560,
+                         "y":  180,
+                         "width":  480,
+                         "height":  290,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "groupIds":  [
+                                          "g-gun"
+                                      ],
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.929Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sg9ggoh4xtbvc",
+                         "type":  "text",
+                         "x":  584,
+                         "y":  204,
+                         "width":  340,
+                         "height":  24,
+                         "strokeColor":  "#0A0A0A",
+                         "opacity":  100,
+                         "text":  "② 枪械科幻化（7 把）",
+                         "fontSize":  20,
+                         "fontFamily":  2,
+                         "groupIds":  [
+                                          "g-gun"
+                                      ],
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgoc91vihl2k",
+                         "type":  "text",
+                         "x":  584,
+                         "y":  248,
+                         "width":  432,
+                         "height":  97,
+                         "strokeColor":  "#404040",
+                         "opacity":  100,
+                         "text":  "· 全枪通用：顶部能量导轨、悬浮全息瞄具、能量弹匣\n· 左轮：等离子弹巢 6 孔发光\n· 狙击：全息镜组 + 能量制退器\n· 轻机枪：能量弹箱发光带 + 排能管",
+                         "fontSize":  16,
+                         "fontFamily":  2,
+                         "groupIds":  [
+                                          "g-gun"
+                                      ],
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgpevorzitpg9",
+                         "type":  "rectangle",
+                         "x":  1080,
+                         "y":  180,
+                         "width":  480,
+                         "height":  290,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "groupIds":  [
+                                          "g-melee"
+                                      ],
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.930Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sgapfyhab9v1",
+                         "type":  "text",
+                         "x":  1104,
+                         "y":  204,
+                         "width":  340,
+                         "height":  24,
+                         "strokeColor":  "#0A0A0A",
+                         "opacity":  100,
+                         "text":  "③ 近战科幻化（7 件）",
+                         "fontSize":  20,
+                         "fontFamily":  2,
+                         "groupIds":  [
+                                          "g-melee"
+                                      ],
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgdyoy4elt2w8",
+                         "type":  "text",
+                         "x":  1104,
+                         "y":  248,
+                         "width":  432,
+                         "height":  97,
+                         "strokeColor":  "#404040",
+                         "opacity":  100,
+                         "text":  "· 铁剑 → 光刃剑：能量刃体 + 发光刃脊\n· 消防斧 → 等离子斧：发光刃口\n· 棒球棍 → 电磁棍：缠绕能量环\n· 长鞭 → 光子鞭：分段发光鞭节",
+                         "fontSize":  16,
+                         "fontFamily":  2,
+                         "groupIds":  [
+                                          "g-melee"
+                                      ],
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgpwr2y5ikfar",
+                         "type":  "text",
+                         "x":  40,
+                         "y":  520,
+                         "width":  360,
+                         "height":  26,
+                         "strokeColor":  "#0A0A0A",
+                         "opacity":  100,
+                         "text":  "灵感参考 · 科幻射击游戏",
+                         "fontSize":  20,
+                         "fontFamily":  2,
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgsga417uyta8",
+                         "type":  "rectangle",
+                         "x":  40,
+                         "y":  560,
+                         "width":  230,
+                         "height":  54,
+                         "strokeColor":  "#7373732E",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "赛博朋克 2077"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.932Z",
+                         "version":  2,
+                         "backgroundColor":  "#FAFAFA"
+                     },
+                     {
+                         "id":  "mv0u17sgxngor4fo3q",
+                         "type":  "rectangle",
+                         "x":  294,
+                         "y":  560,
+                         "width":  230,
+                         "height":  54,
+                         "strokeColor":  "#7373732E",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "光环 Halo"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.933Z",
+                         "version":  2,
+                         "backgroundColor":  "#FAFAFA"
+                     },
+                     {
+                         "id":  "mv0u17sgm6ymt5m84",
+                         "type":  "rectangle",
+                         "x":  548,
+                         "y":  560,
+                         "width":  230,
+                         "height":  54,
+                         "strokeColor":  "#7373732E",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "命运 2 Destiny"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.934Z",
+                         "version":  2,
+                         "backgroundColor":  "#FAFAFA"
+                     },
+                     {
+                         "id":  "mv0u17sg3o8zsmbin9g",
+                         "type":  "rectangle",
+                         "x":  802,
+                         "y":  560,
+                         "width":  230,
+                         "height":  54,
+                         "strokeColor":  "#7373732E",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "泰坦陨落 2"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.935Z",
+                         "version":  2,
+                         "backgroundColor":  "#FAFAFA"
+                     },
+                     {
+                         "id":  "mv0u17sgm8pbfihsk1d",
+                         "type":  "rectangle",
+                         "x":  1056,
+                         "y":  560,
+                         "width":  230,
+                         "height":  54,
+                         "strokeColor":  "#7373732E",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "星际战甲 Warframe"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.936Z",
+                         "version":  2,
+                         "backgroundColor":  "#FAFAFA"
+                     },
+                     {
+                         "id":  "mv0u17sgrgl4au35v0s",
+                         "type":  "rectangle",
+                         "x":  1310,
+                         "y":  560,
+                         "width":  230,
+                         "height":  54,
+                         "strokeColor":  "#7373732E",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "DOOM 永恒"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.938Z",
+                         "version":  2,
+                         "backgroundColor":  "#FAFAFA"
+                     },
+                     {
+                         "id":  "mv0u17sg371lmfexydg",
+                         "type":  "text",
+                         "x":  40,
+                         "y":  660,
+                         "width":  200,
+                         "height":  26,
+                         "strokeColor":  "#0A0A0A",
+                         "opacity":  100,
+                         "text":  "实施阶段",
+                         "fontSize":  20,
+                         "fontFamily":  2,
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:38:27.860Z",
+                         "version":  1,
+                         "textAlign":  "left"
+                     },
+                     {
+                         "id":  "mv0u17sgd5quslpry0u",
+                         "type":  "rectangle",
+                         "x":  40,
+                         "y":  700,
+                         "width":  260,
+                         "height":  130,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "① 材质与能量系统\n新增发光 / 能量材质色板"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.939Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sgagz8fwaf22o",
+                         "type":  "rectangle",
+                         "x":  352,
+                         "y":  700,
+                         "width":  260,
+                         "height":  130,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "② 枪械科幻化\n7 把枪加装能量组件"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.941Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sgvck9ly264gl",
+                         "type":  "rectangle",
+                         "x":  664,
+                         "y":  700,
+                         "width":  260,
+                         "height":  130,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "③ 近战科幻化\n7 件近战光刃化"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.942Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sgfdfykuds1zh",
+                         "type":  "rectangle",
+                         "x":  976,
+                         "y":  700,
+                         "width":  260,
+                         "height":  130,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "④ 人物科幻化\n义体手臂 + 丧尸发光件"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.942Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u17sg1g035ppxuog",
+                         "type":  "rectangle",
+                         "x":  1288,
+                         "y":  700,
+                         "width":  260,
+                         "height":  130,
+                         "strokeColor":  "#7373735C",
+                         "strokeWidth":  1,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "label":  {
+                                       "text":  "⑤ 特效与验证\n能量枪口光 + 运行时自测"
+                                   },
+                         "roundness":  {
+                                           "type":  3
+                                       },
+                         "fillStyle":  "solid",
+                         "createdAt":  "2026-10-09T10:38:27.860Z",
+                         "updatedAt":  "2026-10-09T10:54:56.943Z",
+                         "version":  2,
+                         "backgroundColor":  "#FFFFFF"
+                     },
+                     {
+                         "id":  "mv0u1t7vdgpdilum1fq",
+                         "type":  "arrow",
+                         "x":  308,
+                         "y":  765,
+                         "strokeColor":  "#654ACB",
+                         "strokeWidth":  2,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "roundness":  null,
+                         "points":  [
+                                        [
+                                            0,
+                                            0
+                                        ],
+                                        [
+                                            36,
+                                            0
+                                        ]
+                                    ],
+                         "start":  {
+                                       "id":  "mv0u17sgd5quslpry0u"
+                                   },
+                         "end":  {
+                                     "id":  "mv0u17sgagz8fwaf22o"
+                                 },
+                         "startArrowhead":  null,
+                         "endArrowhead":  "triangle",
+                         "elbowed":  false,
+                         "createdAt":  "2026-10-09T10:38:55.535Z",
+                         "updatedAt":  "2026-10-09T10:38:55.535Z",
+                         "version":  1
+                     },
+                     {
+                         "id":  "mv0u1t7va2cxd1c5bu",
+                         "type":  "arrow",
+                         "x":  620,
+                         "y":  765,
+                         "strokeColor":  "#654ACB",
+                         "strokeWidth":  2,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "roundness":  null,
+                         "points":  [
+                                        [
+                                            0,
+                                            0
+                                        ],
+                                        [
+                                            36,
+                                            0
+                                        ]
+                                    ],
+                         "start":  {
+                                       "id":  "mv0u17sgagz8fwaf22o"
+                                   },
+                         "end":  {
+                                     "id":  "mv0u17sgvck9ly264gl"
+                                 },
+                         "startArrowhead":  null,
+                         "endArrowhead":  "triangle",
+                         "elbowed":  false,
+                         "createdAt":  "2026-10-09T10:38:55.535Z",
+                         "updatedAt":  "2026-10-09T10:38:55.535Z",
+                         "version":  1
+                     },
+                     {
+                         "id":  "mv0u1t7vp378yunykr",
+                         "type":  "arrow",
+                         "x":  932,
+                         "y":  765,
+                         "strokeColor":  "#654ACB",
+                         "strokeWidth":  2,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "roundness":  null,
+                         "points":  [
+                                        [
+                                            0,
+                                            0
+                                        ],
+                                        [
+                                            36,
+                                            0
+                                        ]
+                                    ],
+                         "start":  {
+                                       "id":  "mv0u17sgvck9ly264gl"
+                                   },
+                         "end":  {
+                                     "id":  "mv0u17sgfdfykuds1zh"
+                                 },
+                         "startArrowhead":  null,
+                         "endArrowhead":  "triangle",
+                         "elbowed":  false,
+                         "createdAt":  "2026-10-09T10:38:55.535Z",
+                         "updatedAt":  "2026-10-09T10:38:55.535Z",
+                         "version":  1
+                     },
+                     {
+                         "id":  "mv0u1t7vtq7969o31q",
+                         "type":  "arrow",
+                         "x":  1244,
+                         "y":  765,
+                         "strokeColor":  "#654ACB",
+                         "strokeWidth":  2,
+                         "strokeStyle":  "solid",
+                         "roughness":  0,
+                         "opacity":  100,
+                         "roundness":  null,
+                         "points":  [
+                                        [
+                                            0,
+                                            0
+                                        ],
+                                        [
+                                            36,
+                                            0
+                                        ]
+                                    ],
+                         "start":  {
+                                       "id":  "mv0u17sgfdfykuds1zh"
+                                   },
+                         "end":  {
+                                     "id":  "mv0u17sg1g035ppxuog"
+                                 },
+                         "startArrowhead":  null,
+                         "endArrowhead":  "triangle",
+                         "elbowed":  false,
+                         "createdAt":  "2026-10-09T10:38:55.535Z",
+                         "updatedAt":  "2026-10-09T10:38:55.535Z",
+                         "version":  1
+                     }
+                 ],
+    "appState":  {
+                     "viewBackgroundColor":  "#F7F6F5",
+                     "gridSize":  null
+                 }
+}
