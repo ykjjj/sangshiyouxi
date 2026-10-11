@@ -567,6 +567,7 @@
     <div>切换物品栏</div><div><kbd>1</kbd>–<kbd>9</kbd> 或 <kbd>Q</kbd> 或 鼠标滚轮</div>
     <div>背包</div><div><kbd>E</kbd> 打开背包，把物品拖入快捷栏使用</div>
     <div>换弹</div><div><kbd>R</kbd></div>
+    <div>武器检视</div><div><kbd>F</kbd> 展示手中枪械（再按 F 收回）</div>
     <div>瞄准 / 开镜</div><div>鼠标 <kbd>右键</kbd>（持枪时）</div>
     <div>枪械强化</div><div><kbd>T</kbd> 打开配件界面</div>
     <div>英雄皮肤</div><div><kbd>Y</kbd> 打开皮肤界面（击败 BOSS 解锁英雄级外观）</div>
@@ -2781,6 +2782,20 @@ function updateTracers(dt){
 // 后坐力 / 摆动状态
 let recoil = 0, swingT = 0, bobT = 0, swingId = 'sword';
 let adsSwayT = 0;                       // 开镜呼吸晃动计时
+let inspT = -1, inspId = null;          // 武器检视：进行中计时（-1 未激活）/ 目标武器 id
+const INSP_DUR = 2.6;                   // 检视动画总时长
+function startInspect(){
+  if (state.mode !== 'play') return;
+  const it = currentItem();
+  if (it.kind !== 'weapon') return;
+  const w = WEAPONS[it.id];
+  if (w.melee || w.throw) return;                       // 近战/投掷无检视
+  if (aiming || adsT > 0.05) return;                    // 开镜中不检视
+  if (ammo[it.id] && ammo[it.id].reloading > 0) return; // 换弹中不检视
+  if (inspId === it.id && inspT >= 0){ inspT = -1; return; }  // 检视中再按 F 提前收枪
+  inspId = it.id; inspT = 0;
+  SFX.click();
+}
 const ADS_SCALE = 0.86;                 // 开镜时枪模缩放，避免遮挡准星
 // 近战挥击：按动作类型返回相对基准姿态的偏移
 const REST = {
@@ -3661,6 +3676,7 @@ function hurtPlayer(dmg, from){
 let attackCd = 0;
 
 function tryAttack(){
+  inspT = -1;                                    // 任何攻击/交互立即结束检视
   if (state.mode !== 'play') return;
   const it = currentItem();
   if (it.kind !== 'weapon') return breakBlockAtCrosshair();
@@ -3806,6 +3822,7 @@ function tryShoot(id){
 }
 
 function startReload(id){
+  inspT = -1;                                    // 换弹打断检视
   const w = WEAPONS[id], a = ammo[id];
   if (a.reloading > 0 || a.mag >= w.mag || a.reserve <= 0) return;
   a.reloading = w.reload;
@@ -5034,7 +5051,8 @@ window.addEventListener('keydown', (e) => {
     if (e.code === 'KeyE') openInventory();      // E 打开背包
     if (e.code === 'KeyB') cycleBuildSlot();
     if (e.code === 'KeyT') openAttachPanel();
-    if (e.code === 'KeyY') openSkinPanel();
+    if (e.code === 'KeyF') startInspect();               // 武器检视
+    if (e.code === 'KeyY'){ openSkinPanel(); return; }   // 必须中断，否则落入下方 skin 分支立即关闭
   }
   if (state.mode === 'skin' && (e.code === 'KeyY' || e.code === 'Escape')){
     closeSkinPanel();
@@ -5352,6 +5370,18 @@ function updateViewModel(dt){
   // 后坐力回落
   recoil = lerp(recoil, 0, Math.min(1, dt*9));
 
+  // 武器检视推进与打断（切枪/开镜/换弹/非游玩状态立即取消）
+  if (inspT >= 0){
+    const ci = currentItem();
+    if (state.mode !== 'play' || ci.kind !== 'weapon' || ci.id !== inspId ||
+        adsT > 0.05 || (ammo[inspId] && ammo[inspId].reloading > 0)){
+      inspT = -1;
+    } else {
+      inspT += dt;
+      if (inspT >= INSP_DUR) inspT = -1;
+    }
+  }
+
   viewModel.position.set(swayX, swayY, 0);
   viewModel.rotation.set(0,0,0);
 
@@ -5398,6 +5428,18 @@ function updateViewModel(dt){
         py -= env*0.20; rx += env*0.52; rz -= env*0.46; px += env*0.045;
         const rackK = Math.sin(seg(0.64,0.78)*Math.PI);   // 末段拉枪栓上膛
         pz += rackK*0.07; py += rackK*0.015;
+      }
+
+      // 武器检视动作：抬枪至屏幕中央 → 绕 Y 轴翻转展示侧面 → 回位
+      if (inspT >= 0 && k === inspId){
+        const ip = clamp(inspT / INSP_DUR, 0, 1);
+        const sgm = (a,b) => clamp((ip-a)/(b-a), 0, 1);
+        const sm = u => u*u*(3-2*u);
+        const lift = sm(sgm(0,0.16)) * (1 - sm(sgm(0.80,1)));      // 抬升/收回包络
+        px += lift * -0.16; py += lift * 0.17; pz += lift * 0.10;  // 移向屏幕中心并拉近
+        ry += (sm(sgm(0.10,0.42)) - sm(sgm(0.58,0.88))) * 2.35;    // 翻转展示另一面
+        rz += lift * 0.18;                                          // 轻微侧倾
+        rx += Math.sin(sm(sgm(0.42,0.58)) * Math.PI) * 0.10;        // 展示中段轻点头
       }
     }
 
@@ -6318,6 +6360,7 @@ window.__GAME = { scene, camera, player, zombies, state, blocks, getB, setB, WX,
   openSkinPanel, closeSkinPanel, renderSkinPanel, tickSkinFx,
   NET, netStartHost, netStartJoin, netSend, netUrl, netBuildSnap, netApplySnap,
   netTickHost, netTickClient, netHostMsg, netClientMsg, netClientEvent,
+  startInspect, get inspT(){ return inspT; }, get inspId(){ return inspId; },
   get aiming(){ return aiming; }, set aiming(v){ aiming = v; }, get adsT(){ return adsT; } };
 
 })();
