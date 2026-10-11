@@ -109,6 +109,79 @@
     transition:width .18s ease-out;
   }
 
+  /* ---------- BOSS 方向指示箭头（BOSS 位于视野外时贴屏幕边缘指引） ---------- */
+  #bossArrow{
+    position:absolute; left:50%; top:50%; width:0; height:0;
+    pointer-events:none; z-index:21; opacity:0; transition:opacity .18s;
+  }
+  #bossArrow.show{ opacity:1; }
+  #bossArrow .ba-head{
+    position:absolute; width:0; height:0;
+    border-left:15px solid transparent; border-right:15px solid transparent;
+    border-bottom:27px solid #d14bff;
+    margin-left:-15px; margin-top:-20px;
+    filter:drop-shadow(0 0 9px #b46bff) drop-shadow(0 0 3px #ff8cf0);
+    transform-origin:50% 78%;
+    animation:baPulse 0.9s ease-in-out infinite alternate;
+  }
+  #bossArrow .ba-dist{
+    position:absolute; top:14px; left:0; transform:translateX(-50%);
+    white-space:nowrap; font-size:13px; font-weight:800; letter-spacing:1px;
+    color:#f0d8ff; text-shadow:0 0 8px #b46bff, 0 2px 3px rgba(0,0,0,.9);
+  }
+  @keyframes baPulse{ from{ opacity:.72; } to{ opacity:1; } }
+
+  /* ---------- 局域网联机 ---------- */
+  #coopChip{
+    position:absolute; top:14px; left:14px; z-index:22;
+    display:flex; gap:8px; align-items:center; max-width:44vw;
+    padding:5px 12px; border-radius:20px;
+    background:rgba(10,14,24,.66); border:1px solid #2e3a58;
+    color:#9fd8ff; font-size:12px; letter-spacing:1px;
+    backdrop-filter:blur(6px);
+  }
+  #coopChip .dot{
+    width:8px; height:8px; border-radius:50%; background:#51ff7e;
+    box-shadow:0 0 8px #51ff7e; flex:none;
+  }
+  #coopChip.hidden{ display:none; }
+  #coopChip b{ color:#eaf6ff; }
+  .menuRow{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+  .netTip{ margin-top:10px; font-size:12px; color:#8fa0c0; line-height:1.7; }
+
+  /* ---------- 英雄级皮肤界面 ---------- */
+  #skinPanel{
+    position:absolute; inset:0; z-index:40; display:flex;
+    align-items:center; justify-content:center;
+    background:rgba(6,8,16,.72); backdrop-filter:blur(3px);
+  }
+  #skinPanel.hidden{ display:none; }
+  .skinCard{
+    width:760px; max-width:94vw; max-height:88vh; overflow-y:auto;
+    background:linear-gradient(160deg,#171c2b,#0e111c);
+    border:1px solid #35405e; border-radius:14px; padding:20px 22px;
+    box-shadow:0 18px 60px rgba(0,0,0,.7), 0 0 24px rgba(90,160,255,.12);
+  }
+  .skinHead{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .skinHead h3{ margin:0 0 4px; font-size:20px; color:#dfe9ff; letter-spacing:2px; }
+  .skinHead .sub{ font-size:12.5px; color:#8fa0c4; }
+  .skinGrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; }
+  .skinItem{
+    position:relative; text-align:left; cursor:pointer; border-radius:11px; padding:13px 13px 11px;
+    background:#141a29; border:1px solid #2b3550; transition:all .15s; overflow:hidden;
+  }
+  .skinItem:hover{ border-color:#5a78c8; transform:translateY(-2px); }
+  .skinItem.equipped{ border-color:#53f2ff; box-shadow:0 0 14px rgba(83,242,255,.35); }
+  .skinItem.locked{ cursor:not-allowed; opacity:.62; }
+  .skinItem.locked:hover{ transform:none; border-color:#2b3550; }
+  .skinSwatch{ height:42px; border-radius:7px; margin-bottom:9px; box-shadow:inset 0 0 12px rgba(0,0,0,.5); }
+  .skinItem .sName{ font-size:15px; font-weight:800; letter-spacing:1.5px; }
+  .skinItem .sTag{ font-size:11px; font-weight:700; margin-top:2px; color:#ffd36b; letter-spacing:1px; }
+  .skinItem .sState{ position:absolute; top:9px; right:10px; font-size:11px; font-weight:700; }
+  .skinItem.equipped .sState{ color:#53f2ff; }
+  .skinItem.locked .sState{ color:#8a93ad; }
+  .skinDefaultNote{ margin-top:14px; font-size:12px; color:#7e8db0; }
+
   #waveBanner{
     position:fixed; top:28%; left:50%; transform:translate(-50%,-50%) scale(.9);
     font-size:44px; font-weight:800; letter-spacing:4px; text-align:center;
@@ -430,6 +503,7 @@
 
 <!-- HUD -->
 <div id="hud" class="hidden">
+  <div id="coopChip" class="hidden"><span class="dot"></span><span id="coopTxt">联机中</span></div>
   <div id="crosshair"><i></i><i></i><i></i><i></i></div>
   <div id="topbar">
     <div class="pill">波次 <b id="uiWave">1</b></div>
@@ -441,8 +515,10 @@
   <!-- BOSS 血条（末影龙风格）：BOSS 出场时自动显示 -->
   <div id="bossBar">
     <div class="bname" id="bossName">BOSS 巨兽</div>
-    <div class="bwrap"><div class="bfill" id="bossFill"></div></div>
+    <div class="bwrap><div class="bfill" id="bossFill"></div></div>
   </div>
+  <!-- BOSS 方向指示箭头：BOSS 位于视野外时显示在屏幕边缘并标注距离 -->
+  <div id="bossArrow"><div class="ba-head" id="bossArrowHead"></div><div class="ba-dist" id="bossDist">0m</div></div>
   <div id="bottom">
     <div id="statusRow">
       <div id="healthWrap">
@@ -493,9 +569,15 @@
     <div>换弹</div><div><kbd>R</kbd></div>
     <div>瞄准 / 开镜</div><div>鼠标 <kbd>右键</kbd>（持枪时）</div>
     <div>枪械强化</div><div><kbd>T</kbd> 打开配件界面</div>
+    <div>英雄皮肤</div><div><kbd>Y</kbd> 打开皮肤界面（击败 BOSS 解锁英雄级外观）</div>
     <div>暂停</div><div><kbd>Esc</kbd></div>
   </div>
-  <button class="btn" id="startBtn">开 始 游 戏</button>
+  <button class="btn" id="startBtn">单 人 开 始</button>
+  <div class="menuRow">
+    <button class="btn ghost" id="btnCoopHost">局域网 · 创建队伍（主机）</button>
+    <button class="btn ghost" id="btnCoopJoin">局域网 · 加入队伍</button>
+  </div>
+  <div class="tip netTip">双人合作：主机用 <b style="color:#9ad7ff">python coop-server.py</b> 启动服务后点「创建队伍」，队友在同一 Wi-Fi 的浏览器打开 <b id="coopAddr">主机IP:8770</b> 并点「加入队伍」，即可并肩迎战丧尸潮。</div>
   <div class="tip">用 <b style="color:#9ad7ff">B 键</b> 选方块，右键搭建掩体与防线；击杀丧尸获得<b style="color:#7df0ff">电能</b>，可安放<b style="color:#7df0ff">防空炮塔</b>自动迎敌（优先打击飞行尸）。<br/>小心第 3 波起出现的<b style="color:#c79bff">飞行尸</b>——它们越过掩体从空中俯冲，固守时记得抬头。</div>
 </div>
 
@@ -530,6 +612,9 @@
 <!-- 枪械配件强化界面 -->
 <div id="attachPanel" class="hidden"></div>
 
+<!-- 英雄级皮肤界面 -->
+<div id="skinPanel" class="hidden"></div>
+
 <!-- 背包界面（参考我的世界） -->
 <div id="invPanel" class="hidden">
   <div class="invCard">
@@ -558,6 +643,23 @@ if (typeof THREE === 'undefined'){
     '加载 three.js 失败 — 请检查网络连接后刷新页面';
   return;
 }
+
+/* =========================================================================
+   局域网联机状态（提前声明：setB 等底层函数需要引用，函数实现见 20 节）
+   mode: off 单机 | host 主机(权威模拟) | client 队友(快照插值)
+   ========================================================================= */
+var NET = {
+  mode: 'off', ws: null, myId: 'H', track: false,
+  clients: {},            // host: cid -> { name, tgt, hp, dead }
+  peers: {},              // 双方: cid -> 远端玩家模型 { part, cur, curYaw, tgt, ... }
+  zrep: new Map(),        // client: zid -> 丧尸镜像（可被 rayHitsZombie 直接使用）
+  zrepArr: [],
+  zseq: 1, dseq: 1,
+  snapT: 0, stT: 0,
+  diffs: [],              // host: 待广播的方块变更 [x,y,z,v,...]
+  cGases: [], cProj: [], cBossProj: [], turretViews: [],
+  bossDmg: 40, hostAddr: '', _tp: null
+};
 
 /* =========================================================================
    0. 常量
@@ -769,7 +871,7 @@ function getB(x,y,z){
   if (!inB(x,y,z)) return AIR;
   return blocks[IDX(x,y,z)];
 }
-function setB(x,y,z,v){ if (inB(x,y,z)) blocks[IDX(x,y,z)] = v; }
+function setB(x,y,z,v){ if (inB(x,y,z)){ blocks[IDX(x,y,z)] = v; if (NET.mode === 'host' && NET.track) NET.diffs.push(x, y, z, v); } }
 function isSolid(id){ return id !== AIR && id !== WATER; }
 function isOpaque(id){ return id !== AIR && id !== WATER; }
 
@@ -1292,6 +1394,8 @@ const SFX = {
   dig(){ sfxNoise(0.18, 0.1, 500); },
   place(){ sfxNoise(0.16, 0.08, 900); },
   reload(){ sfxNoise(0.13, 0.05, 1600, 'highpass'); setTimeout(()=>sfxNoise(0.16,0.07,700), 320); },
+  magSeat(){ sfxNoise(0.15, 0.08, 520); },                                   // 弹匣卡入
+  rack(){ sfxNoise(0.14, 0.09, 1400, 'bandpass', 1.6); sfxNoise(0.10,0.05,800); }, // 拉枪栓上膛
   empty(){ sfxNoise(0.1, 0.04, 2600, 'highpass'); },
   wave(){ sfxTone(180, 520, 0.7, 0.2, 'triangle'); },
   throw(){ sfxNoise(0.12, 0.14, 1100, 'bandpass', 1.2); sfxTone(300, 90, 0.2, 0.08, 'sine'); },
@@ -1684,7 +1788,7 @@ for (const k in DROPS){
   DROP_HALO_MATS[k] = new THREE.MeshBasicMaterial({ color:c, wireframe:true, transparent:true, opacity:0.30 });
 }
 
-function spawnDrop(type, payload, p){
+function spawnDrop(type, payload, p, nid){
   if (drops.length >= MAX_DROPS){
     scene.remove(drops.shift().mesh);
   }
@@ -1693,7 +1797,8 @@ function spawnDrop(type, payload, p){
   const halo = new THREE.Mesh(DROP_HALO_GEO, DROP_HALO_MATS[type]);
   mesh.add(halo);
   scene.add(mesh);
-  const d = { type, payload:payload||null, pos:p.clone(), t:Math.random()*6.28, life:DROP_LIFE, mesh, halo };
+  const d = { nid: nid !== undefined ? nid : (NET.mode === 'host' ? NET.dseq++ : 0),
+              type, payload:payload||null, pos:p.clone(), t:Math.random()*6.28, life:DROP_LIFE, mesh, halo };
   drops.push(d);
   burst(p.clone().setY(p.y+0.2), 7, DROPS[type].color, 1.7, 0.07, 0.45);
   return d;
@@ -1806,7 +1911,11 @@ function updateDrops(dt){
     d.halo.rotation.x = d.t*0.9; d.halo.rotation.z = d.t*0.7;
     const dx = px - d.pos.x, dy = py - m.position.y, dz = pz - d.pos.z;
     if (dx*dx + dz*dz < 2.4*2.4 && Math.abs(dy) < 2.2){
-      if (applyPickup(d)){ scene.remove(m); drops.splice(i,1); continue; }
+      if (applyPickup(d)){
+        scene.remove(m); drops.splice(i,1);
+        if (NET.mode === 'client') netSend({ t:'take', id:d.nid });   // 队友拾取 → 主机核销
+        continue;
+      }
     }
     if (d.life <= 0){ scene.remove(m); drops.splice(i,1); }
   }
@@ -2351,11 +2460,257 @@ function addArm(g, x, y, z, rotX){
   models.rocket = g;
 }
 for (const k in models){
-  const v = VIEW[k] || { p:[0.30,-0.30,-0.52], s:1 };
-  models[k].position.set(v.p[0], v.p[1], v.p[2]);
+  const vw = VIEW[k] || { p:[0.30,-0.30,-0.52], s:1 };
+  models[k].position.set(vw.p[0], vw.p[1], vw.p[2]);
   models[k].visible = false;
-  models[k].scale.setScalar(v.s);
+  models[k].scale.setScalar(vw.s);
   viewModel.add(models[k]);
+}
+
+/* =========================================================================
+   英雄级皮肤系统（参考 CF 英雄级武器：能量换色 + 流光导轨 + 环绕能量核心）
+   e=主能量色  p=等离子副色  f=光纤/全息色
+   ========================================================================= */
+const SKINS = {
+  pistol:[
+    { id:'xiuluo',  name:'修罗',     e:0xff3b6b, p:0x9a2bff, f:0xffb04a },
+    { id:'anyue',   name:'暗月',     e:0x8ff4ff, p:0x3d7bff, f:0xffffff }
+  ],
+  revolver:[
+    { id:'tianshen',name:'天神',     e:0xffd66a, p:0xff4a2a, f:0xfff0b0 }
+  ],
+  smg:[
+    { id:'lielong', name:'烈龙',     e:0xff9a2e, p:0xff3b26, f:0xffe08a }
+  ],
+  rifle:[
+    { id:'leishen', name:'雷神',     e:0x53f2ff, p:0x2a6bff, f:0xbff7ff },
+    { id:'huoqilin',name:'火麒麟',   e:0xff5722, p:0xffc02e, f:0xffe8a0 }
+  ],
+  shotgun:[
+    { id:'huimie',  name:'毁灭',     e:0xff2a4a, p:0x7a0f24, f:0xff9aa8 }
+  ],
+  sniper:[
+    { id:'jiguang', name:'极光',     e:0x6f7bff, p:0x53f2ff, f:0xc6d2ff }
+  ],
+  lmg:[
+    { id:'lianyu',  name:'炼狱',     e:0xff7a1a, p:0xff2a1a, f:0xffd08a }
+  ],
+  rocket:[
+    { id:'shenpan', name:'末日审判', e:0x9dff3c, p:0xb46bff, f:0xe6ffb0 }
+  ]
+};
+const SKIN_KEY = wid => wid;                 // 武器支持皮肤的判定（表中存在即支持）
+const SKIN_OWN_KEY = (wid, sid) => wid + ':' + sid;
+let skinOwned = {}, skinEquip = {};
+function loadSkins(){
+  try{
+    const d = JSON.parse(localStorage.getItem('zsf_skins') || 'null');
+    if (d){ skinOwned = d.owned || {}; skinEquip = d.equip || {}; }
+    else {
+      // 初始赠送两款英雄级皮肤，开箱即用
+      skinOwned = { [SKIN_OWN_KEY('rifle','leishen')]:1, [SKIN_OWN_KEY('pistol','xiuluo')]:1 };
+      skinEquip = { rifle:'leishen', pistol:'xiuluo' };
+      saveSkins();
+    }
+  }catch(e){ skinOwned = {}; skinEquip = {}; }
+}
+function saveSkins(){
+  try{ localStorage.setItem('zsf_skins', JSON.stringify({ owned:skinOwned, equip:skinEquip })); }catch(e){}
+}
+function findSkin(wid, sid){
+  const list = SKINS[wid];
+  return list ? list.find(s => s.id === sid) : null;
+}
+function currentSkin(wid){
+  const sid = skinEquip[wid];
+  return sid ? findSkin(wid, sid) : null;
+}
+
+// 需要随皮肤换色的共享自发光材质
+const SKIN_MAT_SET = new Set([MAT_ENERGY, MAT_PLASMA, MAT_FIBER, MAT_HOLO]);
+function skinCloneMat(mat, sk){
+  if (mat === MAT_ENERGY) return new THREE.MeshBasicMaterial({ color:sk.e });
+  if (mat === MAT_PLASMA) return new THREE.MeshBasicMaterial({ color:sk.p });
+  if (mat === MAT_FIBER)  return new THREE.MeshBasicMaterial({ color:sk.f });
+  if (mat === MAT_HOLO)   return new THREE.MeshBasicMaterial({ color:sk.f, transparent:true, opacity:0.5, depthWrite:false });
+  return mat;
+}
+
+// 英雄特效件：双侧流光导轨 + 顶部能量条 + 环绕粒子 + 旋转能量核心
+function buildSkinFx(sk){
+  const fxg = new THREE.Group();
+  const matE = new THREE.MeshBasicMaterial({ color:sk.e });
+  const matP = new THREE.MeshBasicMaterial({ color:sk.p });
+  const stripL = new THREE.Mesh(new THREE.BoxGeometry(0.010, 0.012, 0.30), matE);
+  stripL.position.set(-0.047, 0.022, -0.10);
+  const stripR = stripL.clone(); stripR.position.x = 0.047;
+  const stripT = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.010, 0.24), matP);
+  stripT.position.set(0, 0.108, -0.02);
+  fxg.add(stripL, stripR, stripT);
+  // 环绕能量粒子
+  const orbit = new THREE.Group();
+  orbit.position.set(0, 0.02, -0.14);
+  for (let i=0;i<3;i++){
+    const a = i/3*Math.PI*2;
+    const c = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.022, 0.022), i%2 ? matP : matE);
+    c.position.set(Math.cos(a)*0.085, Math.sin(a)*0.085, 0);
+    orbit.add(c);
+  }
+  fxg.add(orbit);
+  // 尾部能量核心（八面体）
+  const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.034), matP);
+  core.position.set(0, 0.05, 0.13);
+  fxg.add(core);
+  fxg.userData = { orbit, core, strips:[stripL, stripR, stripT] };
+  return fxg;
+}
+
+function restoreSkin(wid){
+  const g = models[wid];
+  if (!g) return;
+  if (g.userData.skinMap){
+    g.userData.skinMap.forEach((orig, mesh) => { mesh.material = orig; });
+    g.userData.skinMap = null;
+  }
+  if (g.userData.skinFx){
+    g.remove(g.userData.skinFx);
+    g.userData.skinFx = null;
+  }
+  delete skinEquip[wid];
+}
+function applySkin(wid, sid){
+  const g = models[wid];
+  if (!g) return;
+  restoreSkin(wid);
+  if (!sid){ saveSkins(); return; }
+  const sk = findSkin(wid, sid);
+  if (!sk) return;
+  const map = new Map();
+  g.traverse(o => {
+    if (o.isMesh && SKIN_MAT_SET.has(o.material)){
+      map.set(o, o.material);
+      o.material = skinCloneMat(o.material, sk);
+    }
+  });
+  g.userData.skinMap = map;
+  const fxg = buildSkinFx(sk);
+  g.add(fxg);
+  g.userData.skinFx = fxg;
+  skinEquip[wid] = sid;
+  saveSkins();
+}
+// 击败 BOSS：随机解锁一款未拥有的英雄级皮肤
+function unlockRandomSkin(){
+  const pool = [];
+  for (const wid in SKINS)
+    for (const sk of SKINS[wid])
+      if (!skinOwned[SKIN_OWN_KEY(wid, sk.id)]) pool.push({ wid, sk });
+  if (!pool.length) return;
+  const pick = pool[Math.floor(Math.random()*pool.length)];
+  skinOwned[SKIN_OWN_KEY(pick.wid, pick.sk.id)] = 1;
+  saveSkins();
+  toastMsg(`英雄级皮肤解锁：${WEAPONS[pick.wid].name} · ${pick.sk.name}（按 Y 装备）`);
+}
+
+// 皮肤特效动画时钟
+let skinT = 0;
+function tickSkinFx(dt){
+  skinT += dt;
+  for (const k in models){
+    const fx = models[k].userData.skinFx;
+    if (!fx){ continue; }
+    fx.visible = models[k].visible;
+    if (!fx.visible) continue;
+    const ud = fx.userData;
+    ud.orbit.rotation.y = skinT * 2.6;
+    ud.orbit.rotation.x = Math.sin(skinT * 1.3) * 0.45;
+    ud.core.rotation.y = skinT * 4.0;
+    ud.core.rotation.x = skinT * 2.4;
+    for (let i=0;i<ud.strips.length;i++)
+      ud.strips[i].scale.z = 1 + Math.sin(skinT*5 + i*1.7) * 0.12;
+  }
+}
+
+loadSkins();
+for (const wid in skinEquip){ if (models[wid]) applySkin(wid, skinEquip[wid]); }
+
+/* ---- 英雄皮肤界面（Y 键打开，开启时暂停游戏） ---- */
+let skinOpen = false;
+function openSkinPanel(){
+  if (state.mode !== 'play') return;
+  skinOpen = true;
+  state.mode = 'skin';
+  resetAim();
+  document.exitPointerLock?.();
+  document.getElementById('hud').classList.add('hidden');
+  document.getElementById('skinPanel').classList.remove('hidden');
+  renderSkinPanel();
+  SFX.click();
+}
+function closeSkinPanel(){
+  if (!skinOpen) return;
+  skinOpen = false;
+  document.getElementById('skinPanel').classList.add('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+  state.mode = 'play';
+  requestLock();
+}
+const hex2 = n => '#' + n.toString(16).padStart(6, '0');
+function renderSkinPanel(){
+  const el = document.getElementById('skinPanel');
+  const it = currentItem();
+  if (it.kind !== 'weapon' || !SKINS[it.id]){
+    el.innerHTML = `<div class="skinCard"><div class="skinHead">
+      <div><h3>英雄皮肤</h3><div class="sub">当前武器暂无可更换的英雄级皮肤，请切换到手枪 / 步枪等枪械</div></div>
+      <button class="btn ghost" id="skinClose">关闭 (Y)</button></div></div>`;
+    el.querySelector('#skinClose').addEventListener('click', closeSkinPanel);
+    return;
+  }
+  const wid = it.id, w = WEAPONS[wid];
+  const list = SKINS[wid] || [];
+  let cards = '';
+  // 默认外观
+  cards += `<button class="skinItem ${!skinEquip[wid]?'equipped':''}" data-sid="">
+    <div class="sState">${!skinEquip[wid]?'使用中':''}</div>
+    <div class="skinSwatch" style="background:linear-gradient(120deg,#3a4048,#b6c0ce)"></div>
+    <div class="sName" style="color:#cdd7ea">原 版</div><div class="sTag" style="color:#8fa0c4">科幻制式</div></button>`;
+  for (const sk of list){
+    const owned = !!skinOwned[SKIN_OWN_KEY(wid, sk.id)];
+    const equipped = skinEquip[wid] === sk.id;
+    const cls = equipped ? 'skinItem equipped' : (owned ? 'skinItem' : 'skinItem locked');
+    cards += `<button class="${cls}" data-sid="${sk.id}">
+      <div class="sState">${equipped ? '使用中' : (owned ? '可装备' : '未解锁')}</div>
+      <div class="skinSwatch" style="background:linear-gradient(120deg,${hex2(sk.e)},${hex2(sk.p)});box-shadow:0 0 14px ${hex2(sk.e)}66, inset 0 0 12px rgba(0,0,0,.45)"></div>
+      <div class="sName" style="color:${owned ? hex2(sk.e) : '#9aa6c2'}">${sk.name}</div>
+      <div class="sTag">英雄级 · ${owned ? 'ENERGY FX' : '击败 BOSS 解锁'}</div></button>`;
+  }
+  el.innerHTML = `<div class="skinCard">
+    <div class="skinHead">
+      <div><h3>英雄皮肤 · ${w.name}</h3>
+        <div class="sub">英雄级外观带能量流光、环绕粒子与专属枪口光效 · 皮肤通过击败 BOSS 随机解锁，永久保留</div></div>
+      <button class="btn ghost" id="skinClose">关闭 (Y)</button>
+    </div>
+    <div class="skinGrid">${cards}</div>
+    <div class="skinDefaultNote">提示：按 <b>Y</b> 随时开关本界面；解锁进度保存在本机浏览器中。</div>
+  </div>`;
+  el.querySelector('#skinClose').addEventListener('click', closeSkinPanel);
+  el.querySelectorAll('.skinItem').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sid = btn.dataset.sid;
+      if (sid && !skinOwned[SKIN_OWN_KEY(wid, sid)]){ toastMsg('该皮肤尚未解锁，击败 BOSS 可随机获得'); SFX.empty(); return; }
+      if ((skinEquip[wid] || '') === sid) return;
+      applySkin(wid, sid || null);
+      renderSkinPanel();
+      SFX.click();
+    });
+  });
+}
+
+// 枪口火焰颜色随皮肤变化
+function applyMuzzleSkin(id){
+  const sk = currentSkin(id);
+  if (sk){ flashMat.color.setHex(sk.e); muzzleLight.color.setHex(sk.e); }
+  else { flashMat.color.setHex(0x9ef4ff); muzzleLight.color.setHex(0x7de8ff); }
 }
 
 // 枪口火焰
@@ -2367,6 +2722,23 @@ const muzzleLight = new THREE.PointLight(0x7de8ff, 0, 9, 2);
 camera.add(muzzleLight);
 
 let flashT = 0;
+
+/* ---- 换弹动作：旧弹匣掉落 + 新弹匣上膛（CF 风格分段动作） ---- */
+function buildReloadMag(){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.050, 0.145, 0.062), MAT_DARK);
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.054, 0.018, 0.066), MAT_GUN);
+  base.position.y = -0.081;
+  g.add(body, base);
+  g.visible = false;
+  return g;
+}
+const rldMagOld = buildReloadMag();
+const rldMagNew = buildReloadMag();
+viewModel.add(rldMagOld, rldMagNew);
+function hideReloadMags(){ rldMagOld.visible = false; rldMagNew.visible = false; }
+// 段间音效标记（由 updateViewModel 按进度触发）
+let rldSfxSeat = false, rldSfxRack = false;
 
 // 弹道拖尾
 const tracerGeo = new THREE.BoxGeometry(1, 0.035, 0.035);
@@ -2803,6 +3175,8 @@ function spawnZombie(px, pz, wave, forceVariant){
     strafeDir: Math.random() < 0.5 ? 1 : -1,  // 飞行尸绕圈方向
     strafeT: randi(1.2, 2.6),                  // 绕圈切换计时
     diveT: 0,                                  // 俯冲状态计时（>0 正在俯冲）
+    zid: NET.mode === 'host' ? NET.zseq++ : 0, // 联机同步 id
+    vkey: v.key || 'walker',
     part
   };
   part.group.position.copy(z0.pos);
@@ -2912,10 +3286,13 @@ function damageZombie(z0, dmg, dirVec, knock = 4.2, srcId = null, headshot = fal
     burst(chest, 16, 0x6e1010, 4.0, 0.13, 1.0);
     state.kills++;
     state.credits += killCredit(z0.variant);
+    if (z0.variant.boss) unlockRandomSkin();   // 击败 BOSS 随机解锁英雄级皮肤
     // 死亡遗留效果：自爆尸引爆 / 毒雾尸释放毒云
     if (z0.variant.explode) queueBoom(chest.clone(), z0.variant.explode, 0.30);
     if (z0.variant.gas) spawnGas(z0.pos.clone().setY(z0.pos.y + z0.height*0.4), z0.variant.gas);
     addKillFeed(srcId, z0);
+    if (NET.mode === 'host')
+      netBroadcast({ t:'ev', k:'kill', w:srcId, v:z0.vkey, boss:z0.variant.boss ? 1 : 0 });
     rollDrop(z0);                 // 击杀掉落道具
     updateTopUI();
     return true;
@@ -2947,10 +3324,44 @@ function hideBossBar(){
   if (bar) bar.style.display = 'none';
 }
 
+/* ---- BOSS 方向指示箭头：BOSS 在视野外时贴屏幕边缘指引，并显示距离 ---- */
+const bossArrowEl = document.getElementById('bossArrow');
+const bossArrowHead = document.getElementById('bossArrowHead');
+const _baProj = new THREE.Vector3();
+function updateBossArrow(){
+  const z0 = state.boss;
+  if (!z0 || state.mode !== 'play' || document.hidden){
+    bossArrowEl.classList.remove('show');
+    return;
+  }
+  _baProj.set(z0.pos.x, z0.pos.y + (z0.height || 2) * 0.72, z0.pos.z).project(camera);
+  const behind = _baProj.z > 1;
+  let nx = _baProj.x, ny = _baProj.y;
+  if (behind){ nx = -nx; ny = -ny; }                 // 身后：把方向翻到对侧屏幕边缘
+  // 在视野内（含边缘余量）则不显示箭头
+  if (!behind && Math.abs(nx) < 0.82 && Math.abs(ny) < 0.72){
+    bossArrowEl.classList.remove('show');
+    return;
+  }
+  const W = window.innerWidth, H = window.innerHeight;
+  const marginX = 64, marginY = 86;
+  const rx = W/2 - marginX, ry = H/2 - marginY;
+  const t = Math.min(rx / Math.max(1e-4, Math.abs(nx)), ry / Math.max(1e-4, Math.abs(ny)));
+  const px = nx * t, py = ny * t;                     // 相对屏幕中心（NDC y 向上）
+  bossArrowEl.style.transform = `translate(${px}px, ${-py}px)`;
+  // 箭头默认指上（屏幕 -y），旋转到指向 (nx, -ny 屏幕坐标)
+  const ang = Math.atan2(-ny, nx) + Math.PI/2;
+  bossArrowHead.style.transform = `rotate(${ang}rad)`;
+  const d = Math.hypot(z0.pos.x - player.pos.x, z0.pos.z - player.pos.z);
+  document.getElementById('bossDist').textContent = Math.round(d) + 'm';
+  bossArrowEl.classList.add('show');
+}
+
 // 飞行尸空中 AI：高空游弋绕圈 → 近距俯冲攻击 → 拉起；越过所有地面掩体
 function updateFlyer(z0, dt){
   const part = z0.part;
-  const pp = player.pos;
+  const tgt = netTargetFor(z0.pos);      // 联机时锁最近存活玩家
+  const pp = tgt.pos;
   const dx = pp.x - z0.pos.x, dz = pp.z - z0.pos.z;
   const distXZ = Math.hypot(dx, dz) || 1;
   const chestY = pp.y + 1.2;
@@ -2974,7 +3385,7 @@ function updateFlyer(z0, dt){
     const d3 = Math.hypot(pp.x-z0.pos.x, chestY-z0.pos.y, pp.z-z0.pos.z);
     if (d3 < 1.8 && z0.attackCd <= 0){
       z0.attackCd = 1.3;
-      hurtPlayer(z0.damage, z0);
+      netHitTarget(tgt, z0);
       z0.anim += 4;
       z0.diveT = 0.001;
     }
@@ -2998,7 +3409,7 @@ function updateFlyer(z0, dt){
     // BOSS 飞行尸：中距离时远程吐息（紫色能量弹）
     if (z0.variant.boss && z0.attackCd <= 0 && distXZ > 3.5 && distXZ < 13){
       z0.attackCd = 1.5;
-      fireBossProjectile(z0, 22, z0.variant.glowEyes || 0xb46bff);
+      fireBossProjectile(z0, 22, z0.variant.glowEyes || 0xb46bff, pp);
     }
     // 距离合适、攻击就绪 → 进入俯冲
     if (z0.attackCd <= 0 && distXZ < 8.0 && Math.abs(z0.pos.y - chestY) < 6.5) z0.diveT = 0.7;
@@ -3028,10 +3439,11 @@ function updateFlyer(z0, dt){
 }
 
 function updateZombies(dt){
-  const pp = player.pos;
   for (let i = zombies.length-1; i >= 0; i--){
     const z0 = zombies[i];
     const part = z0.part;
+    const tgt = netTargetFor(z0.pos);      // 联机时锁最近存活玩家
+    const pp = tgt.pos;
     if (z0.hitFlash > 0){
       z0.hitFlash -= dt;
       const on = z0.hitFlash > 0;
@@ -3145,14 +3557,14 @@ function updateZombies(dt){
     const vertGap = Math.abs((pp.y + 0.9) - chestY);
     if (distToP < 1.55 && vertGap < 1.7 && z0.attackCd <= 0){
       z0.attackCd = 1.05;
-      hurtPlayer(z0.damage, z0);
+      netHitTarget(tgt, z0);
       z0.anim += 3.0;              // 攻击抖动
     }
 
     // ---- BOSS 远程攻击：距离较远时投掷能量弹 ----
     if (z0.variant.boss && distToP > 7.0 && z0.attackCd <= 0){
       z0.attackCd = 1.8;
-      fireBossProjectile(z0, 20, z0.variant.glowEyes || 0xff3a2a);
+      fireBossProjectile(z0, 20, z0.variant.glowEyes || 0xff3a2a, pp);
     }
 
     // ---- 自爆尸：贴近玩家后点燃引信，倒计时结束自爆 ----
@@ -3261,6 +3673,7 @@ function tryAttack(){
 
 function meleeAttack(id){
   const w = WEAPONS[id];
+  if (NET.mode === 'client') return netMelee(id);    // 队友：本地挥砍 + 主机判定
   if (attackCd > 0) return;
   attackCd = w.cooldown;
   swingId = id;
@@ -3296,6 +3709,7 @@ function meleeAttack(id){
 }
 
 function tryShoot(id){
+  if (NET.mode === 'client') return netTryShoot(id);   // 队友：本地表现 + 主机权威判定
   const w = WEAPONS[id], a = ammo[id];
   if (a.reloading > 0) return;
   if (attackCd > 0) return;
@@ -3316,6 +3730,7 @@ function tryShoot(id){
 
   // 枪口火焰：位置由武器模型的 tip 换算到 viewModel 空间
   flashT = 0.05;
+  applyMuzzleSkin(id);
   muzzleFlash.visible = true;
   models[id].updateMatrix();
   const mzLocal = w.tip.clone().applyMatrix4(models[id].matrix);
@@ -3336,10 +3751,12 @@ function tryShoot(id){
 
   const knockPer = pellets > 1 ? (w.knock * 1.6 / pellets) : w.knock;
   let anyHit = false;
+  let shotDir0 = null, shotDist = 140;   // 联机广播用：首发方向与命中距离
 
   for (let pi=0; pi<pellets; pi++){
     const dir = new THREE.Vector3();
     camera.getWorldDirection(dir);
+
     const sp = w.spread * spreadMul;
     dir.x += randi(-1,1)*sp;
     dir.y += randi(-1,1)*sp;
@@ -3361,20 +3778,27 @@ function tryShoot(id){
       // 爆头判定：命中点高度 >= 该尸身高的 72%（位于头部区域）
       const headY = bestZ.pos.y + bestZ.height * 0.72;
       const hs = p.y >= headY;
-      if (pi === 0) showTracer(muzzle, p);
+      if (pi === 0){ showTracer(muzzle, p); shotDir0 = dir; shotDist = bestT; }
       damageZombie(bestZ, w.damage, dir.clone().setY(0).normalize(), knockPer, id, hs);
       anyHit = true;
     } else if (vox && voxT < maxD){
       const p = origin.clone().addScaledVector(dir, voxT);
-      if (pi === 0) showTracer(muzzle, p);
+      if (pi === 0){ showTracer(muzzle, p); shotDir0 = dir; shotDist = voxT; }
       const n = new THREE.Vector3(vox.nx, vox.ny, vox.nz);
       burst(p.clone().addScaledVector(n, 0.05), pellets > 1 ? 3 : 6, 0xbbb2a0, 2.4, 0.07, 0.4);
     } else if (pi === 0){
       showTracer(muzzle, origin.clone().addScaledVector(dir, maxD));
+      shotDir0 = dir; shotDist = maxD;
     }
   }
 
   if (anyHit) flashCrosshair();
+
+  // 主机开枪 → 通知队友播放弹道与枪声
+  if (NET.mode === 'host' && shotDir0)
+    netBroadcast({ t:'ev', k:'shot', o:[+origin.x.toFixed(2),+origin.y.toFixed(2),+origin.z.toFixed(2)],
+                   d:[+shotDir0.x.toFixed(3),+shotDir0.y.toFixed(3),+shotDir0.z.toFixed(3)],
+                   ds:+shotDist.toFixed(1), w:id });
 
   // 后坐力
   recoil += w.recoil * kickMul;
@@ -3386,6 +3810,7 @@ function startReload(id){
   if (a.reloading > 0 || a.mag >= w.mag || a.reserve <= 0) return;
   a.reloading = w.reload;
   SFX.reload();
+  rldSfxSeat = false; rldSfxRack = false;   // 复位分段动作音效标记
   updateAmmoUI();
 }
 
@@ -3418,9 +3843,10 @@ function addShake(dur, amp){ shakeT = Math.max(shakeT, dur); shakeAmp = Math.max
 
 /* ---- BOSS 远程攻击：发射能量弹 ---- */
 const BOSS_PROJ_GEO = new THREE.SphereGeometry(0.28, 10, 8);
-function fireBossProjectile(shooter, speed = 18, color = 0xff3a2a){
+function fireBossProjectile(shooter, speed = 18, color = 0xff3a2a, targetPos = null){
   const from = new THREE.Vector3(shooter.pos.x, shooter.pos.y + shooter.height*0.7, shooter.pos.z);
-  const target = new THREE.Vector3(player.pos.x, player.pos.y + 1.0, player.pos.z);
+  const tp = targetPos || player.pos;
+  const target = new THREE.Vector3(tp.x, tp.y + 1.0, tp.z);
   const dir = target.clone().sub(from).normalize();
   // 加入轻微预判与散布
   dir.x += randi(-0.04, 0.04); dir.y += randi(-0.02, 0.05); dir.z += randi(-0.04, 0.04);
@@ -3467,13 +3893,6 @@ function throwGrenade(weaponId = 'grenade'){
   swingId = weaponId; swingT = w.adur;
   SFX.throw();
 
-  const g = new THREE.Group();
-  const body = new THREE.Mesh(PG_GEO, weaponId === 'hegrenade'
-        ? new THREE.MeshLambertMaterial({ color:0x6a2a2a }) : PG_MAT); g.add(body);
-  g.add(mk(0.09, 0.06, 0.09, MAT_STEEL, 0, 0.12, 0));
-  g.add(mk(0.03, 0.03, 0.08, MAT_STEEL, 0.06, 0.12, 0));
-  scene.add(g);
-
   const dir = new THREE.Vector3();
   camera.getWorldDirection(dir);
   const p = camera.position.clone().addScaledVector(dir, 0.6);
@@ -3484,9 +3903,27 @@ function throwGrenade(weaponId = 'grenade'){
   const vel = dir.clone().multiplyScalar(throwPow).add(new THREE.Vector3(0, lift, 0));
   vel.x += player.vel.x; vel.z += player.vel.z;
 
+  // 队友：本地只做投掷表现，弹道模拟交主机
+  if (NET.mode === 'client'){
+    netSend({ t:'nade', o:[+p.x.toFixed(2),+p.y.toFixed(2),+p.z.toFixed(2)],
+              v:[+vel.x.toFixed(2),+vel.y.toFixed(2),+vel.z.toFixed(2)], w:weaponId });
+    return;
+  }
+
+  const g = makeGrenadeMesh(weaponId);
+  scene.add(g);
   g.position.copy(p);
   projectiles.push({ pos:p, vel, fuse:w.fuse, mesh:g, weaponId,
     spin:new THREE.Vector3(randi(-8,8), randi(-8,8), randi(-8,8)) });
+}
+
+function makeGrenadeMesh(weaponId){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(PG_GEO, weaponId === 'hegrenade'
+        ? new THREE.MeshLambertMaterial({ color:0x6a2a2a }) : PG_MAT); g.add(body);
+  g.add(mk(0.09, 0.06, 0.09, MAT_STEEL, 0, 0.12, 0));
+  g.add(mk(0.03, 0.03, 0.08, MAT_STEEL, 0.06, 0.12, 0));
+  return g;
 }
 
 // 火箭筒：发射直射火箭弹，命中方块/丧尸即爆炸
@@ -3506,7 +3943,7 @@ function fireRocket(id){
   models[id].updateMatrix();
   recoil += (w.recoil || 0.06) * lerp(1, 0.55, adsT);
   player.pitch = clamp(player.pitch + (w.recoil || 0.06) * 1.2, -1.55, 1.55);
-  flashT = 0.06; muzzleFlash.visible = true;
+  flashT = 0.06; applyMuzzleSkin(id); muzzleFlash.visible = true;
   SFX[w.snd] ? SFX[w.snd]() : SFX.shootSniper();
 
   const dir = new THREE.Vector3();
@@ -3514,7 +3951,28 @@ function fireRocket(id){
   const origin = camera.position.clone();
   const muzzle = getMuzzleWorld();
 
+  // 队友：本地只做发射表现，弹道模拟交主机
+  if (NET.mode === 'client'){
+    netSend({ t:'rocket', o:[+muzzle.x.toFixed(2),+muzzle.y.toFixed(2),+muzzle.z.toFixed(2)],
+              d:[+dir.x.toFixed(3),+dir.y.toFixed(3),+dir.z.toFixed(3)] });
+    return;
+  }
+
   // 火箭弹模型：弹体 + 尾翼 + 尾焰点光
+  const g = makeRocketMesh(dir);
+  scene.add(g);
+
+  const p = muzzle.clone();
+  const vel = dir.clone().multiplyScalar(60);          // 高速直射，轻微重力
+  vel.x += player.vel.x; vel.z += player.vel.z;
+  g.position.copy(p);
+  g.lookAt(p.clone().add(dir));                        // 初始朝向（飞行中每帧重算）
+
+  projectiles.push({ pos:p, vel, fuse:4.0, mesh:g, weaponId:'rocket',
+    spin:new THREE.Vector3(), rocket:true, flame:g.__flame });
+}
+
+function makeRocketMesh(dir){
   const g = new THREE.Group();
   const body = new THREE.Mesh(ROCKET_GEO, ROCKET_MAT); g.add(body);
   g.add(mk(0.30, 0.02, 0.02, MAT_STEEL, 0.22, 0, 0));
@@ -3522,16 +3980,8 @@ function fireRocket(id){
   g.add(mk(0.02, 0.16, 0.16, MAT_STEEL, -0.26, 0, 0));
   g.children[g.children.length-1].rotation.x = Math.PI/2;
   const flame = new THREE.PointLight(0xff8a30, 4, 8, 2); flame.position.set(-0.3,0,0); g.add(flame);
-  g.lookAt(muzzle.clone().add(dir));
-  scene.add(g);
-
-  const p = muzzle.clone();
-  const vel = dir.clone().multiplyScalar(60);          // 高速直射，轻微重力
-  vel.x += player.vel.x; vel.z += player.vel.z;
-  g.position.copy(p);
-
-  projectiles.push({ pos:p, vel, fuse:4.0, mesh:g, weaponId:'rocket',
-    spin:new THREE.Vector3(), rocket:true, flame });
+  g.__flame = flame;
+  return g;
 }
 
 function updateProjectiles(dt){
@@ -3580,6 +4030,9 @@ function explode(pos, weaponId = 'grenade'){
   // 音效 + 屏幕震动（火箭筒更剧烈）
   SFX.explode();
   addShake(isRocket ? 0.6 : 0.4, isRocket ? 0.32 : 0.16);
+  if (NET.mode === 'host')
+    netBroadcast({ t:'ev', k:'boom', p:[+pos.x.toFixed(2),+pos.y.toFixed(2),+pos.z.toFixed(2)],
+                   r:R, rk:isRocket ? 1 : 0 });
 
   // 特效：火花 + 烟
   burst(pos, isRocket ? 90 : 60, 0xffb04a, isRocket ? 12 : 9, 0.16, 0.9, 1.4);
@@ -3647,6 +4100,8 @@ function explodeBoom(b){
   const R = b.radius;
   SFX.explode();
   addShake(0.34, 0.13);
+  if (NET.mode === 'host')
+    netBroadcast({ t:'ev', k:'boom', p:[+b.pos.x.toFixed(2),+b.pos.y.toFixed(2),+b.pos.z.toFixed(2)], r:R, rk:0 });
   burst(b.pos, 44, 0xbfe86a, 8, 0.18, 0.85, 1.2);
   burst(b.pos, 20, 0x2a3a10, 4.5, 0.26, 1.4, 0.7);
   for (const z0 of zombies){
@@ -3675,6 +4130,9 @@ function spawnGas(pos, spec){
   mesh.scale.setScalar(spec.radius);
   scene.add(mesh);
   gases.push({ pos:pos.clone(), t: spec.time, radius: spec.radius, dps: spec.dps, mesh, cd: 0 });
+  if (NET.mode === 'host')
+    netBroadcast({ t:'ev', k:'gas', p:[+pos.x.toFixed(2),+pos.y.toFixed(2),+pos.z.toFixed(2)],
+                   r:spec.radius, dps:spec.dps, tm:spec.time });
 }
 function updateGases(dt){
   for (let i = gases.length-1; i >= 0; i--){
@@ -3719,6 +4177,7 @@ function breakBlockAt(hit, silent=false){
   burst(new THREE.Vector3(hit.x+0.5, hit.y+0.5, hit.z+0.5), 14,
         blockColor(hit.id), 3.0, 0.11, 0.7);
   SFX.dig();
+  if (NET.mode === 'client') netSend({ t:'dig', x:hit.x, y:hit.y, z:hit.z });
 }
 
 function blockColor(id){
@@ -3765,8 +4224,8 @@ function placeBlock(){
     liftPlayer = true;
   }
 
-  // 不能把丧尸封进方块里
-  for (const z0 of zombies){
+  // 不能把丧尸封进方块里（队友端检查丧尸镜像）
+  for (const z0 of (NET.mode === 'client' ? NET.zrepArr : zombies)){
     if (z0.dead) continue;
     const zx0 = z0.pos.x - z0.radius, zx1 = z0.pos.x + z0.radius;
     const zz0 = z0.pos.z - z0.radius, zz1 = z0.pos.z + z0.radius;
@@ -3776,6 +4235,7 @@ function placeBlock(){
 
   setB(x,y,z, it.id);
   markDirtyAt(x,y,z);
+  if (NET.mode === 'client') netSend({ t:'place', x, y, z, id:it.id });
   if (liftPlayer){
     player.pos.y = y + 1.001;   // 站到新方块顶面（留出小余量避免抖动）
     player.vel.y = 0;
@@ -3840,6 +4300,20 @@ function cellFree(x, y, z){
 
 function placeTurret(){
   if (state.mode !== 'play') return;
+  // 队友：本地校验与扣费，主机负责生成炮塔并模拟作战
+  if (NET.mode === 'client'){
+    if (turrets.length + NET.turretViews.length >= TURRET.max){ toastMsg(`防空炮塔已达上限（${TURRET.max} 座）`); SFX.empty(); return; }
+    if (state.credits < TURRET.cost){ toastMsg(`电能不足：需要 ${TURRET.cost}，当前 ${state.credits}`); SFX.empty(); return; }
+    const dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+    const hit = raycastVoxel(camera.position.clone(), dir, REACH);
+    if (!hit || hit.ny !== 1){ toastMsg('请瞄准方块的顶面安放炮塔'); return; }
+    state.credits -= TURRET.cost;
+    netSend({ t:'turret', x:hit.x, y:hit.y+1, z:hit.z });
+    updateTopUI();
+    toastMsg('防空炮塔部署请求已发送');
+    return;
+  }
   if (turrets.length >= TURRET.max){ toastMsg(`防空炮塔已达上限（${TURRET.max} 座）`); SFX.empty(); return; }
   if (state.credits < TURRET.cost){ toastMsg(`电能不足：需要 ${TURRET.cost}，当前 ${state.credits}`); SFX.empty(); return; }
 
@@ -3919,6 +4393,9 @@ function updateTurrets(dt){
       t.cd = TURRET.fireCd;
       const aim = new THREE.Vector3(cx, cy, cz);
       showTracer(muzzle, aim);
+      if (NET.mode === 'host')
+        netBroadcast({ t:'ev', k:'ts', f:[+muzzle.x.toFixed(2),+muzzle.y.toFixed(2),+muzzle.z.toFixed(2)],
+                       p:[+cx.toFixed(2),+cy.toFixed(2),+cz.toFixed(2)] });
       burst(muzzle, 2, 0x9ef4ff, 1.4, 0.05, 0.18);
       burst(aim, 4, 0x53f2ff, 1.8, 0.07, 0.35);
       damageZombie(z0, TURRET.damage, null, 1.2, 'turret');
@@ -4012,6 +4489,7 @@ function startWave(n){
   showBanner(`第 ${n} 波`, n % 5 === 0 ? 'BOSS 巨兽来袭！' : (n === 1 ? '活下去' : `丧尸 ×${state.toSpawn + zombies.length}`));
   SFX.wave();
   updateTopUI();
+  if (NET.mode === 'host') netBroadcast({ t:'ev', k:'wave', n });
 }
 
 function updateWaves(dt){
@@ -4093,6 +4571,9 @@ function startGame(){
   everLocked = false;
   requestLock();
   startWave(1);
+  // 联机：主机开局/重开 → 通知队友重建战局
+  if (NET.mode === 'host')
+    netBroadcast({ t:'init', wv:[state.wave, 1, state.toSpawn, 0] });
 }
 
 function die(){
@@ -4139,12 +4620,14 @@ function updateHealthUI(){
 function updateTopUI(){
   document.getElementById('uiWave').textContent = state.wave;
   document.getElementById('uiKills').textContent = state.kills;
-  const alive = zombies.filter(z=>!z.dead).length;
+  const alive = NET.mode === 'client'
+    ? NET.zrepArr.filter(z => !z.dead).length
+    : zombies.filter(z=>!z.dead).length;
   document.getElementById('uiLeft').textContent = alive + state.toSpawn;
   const cEl = document.getElementById('uiCredits');
   if (cEl){ cEl.textContent = state.credits; cEl.style.color = state.credits >= TURRET.cost ? '#7df0ff' : '#ff9a8f'; }
   const tEl = document.getElementById('uiTurrets');
-  if (tEl) tEl.textContent = `${turrets.length}/${TURRET.max}`;
+  if (tEl) tEl.textContent = `${NET.mode === 'client' ? NET.turretViews.length : turrets.length}/${TURRET.max}`;
 }
 function updateAmmoUI(){
   const it = currentItem();
@@ -4551,6 +5034,11 @@ window.addEventListener('keydown', (e) => {
     if (e.code === 'KeyE') openInventory();      // E 打开背包
     if (e.code === 'KeyB') cycleBuildSlot();
     if (e.code === 'KeyT') openAttachPanel();
+    if (e.code === 'KeyY') openSkinPanel();
+  }
+  if (state.mode === 'skin' && (e.code === 'KeyY' || e.code === 'Escape')){
+    closeSkinPanel();
+    return;
   }
   if (e.code === 'Escape'){
     if (state.mode === 'play') pauseGame();
@@ -4612,8 +5100,14 @@ window.addEventListener('resize', () => {
 document.getElementById('startBtn').addEventListener('click', () => { audio(); startGame(); });
 document.getElementById('invCloseBtn').addEventListener('click', closeInventory);
 document.getElementById('resumeBtn').addEventListener('click', resumeGame);
-document.getElementById('restartBtn1').addEventListener('click', () => { startGame(); });
-document.getElementById('restartBtn2').addEventListener('click', () => { startGame(); });
+document.getElementById('restartBtn1').addEventListener('click', () => {
+  if (NET.mode === 'client') return netClientRespawn();
+  startGame();
+});
+document.getElementById('restartBtn2').addEventListener('click', () => {
+  if (NET.mode === 'client') return netClientRespawn();
+  startGame();
+});
 
 // ---- 设置面板（灵敏度 / FOV / 音量），写入 localStorage ----
 const setSens = document.getElementById('setSens');
@@ -4659,23 +5153,28 @@ function frame(now){
     if (state.mode === 'play' && !inventoryOpen){
       state.elapsed = (performance.now() - state.startTime) / 1000;
       updatePlayer(dt);
-      updateZombies(dt);
-      updateProjectiles(dt);
-      updateBossProjectiles(dt);
-      updateBooms(dt);
-      updateGases(dt);
+      if (NET.mode !== 'client'){
+        updateZombies(dt);
+        updateProjectiles(dt);
+        updateBossProjectiles(dt);
+        updateBooms(dt);
+        updateGases(dt);
+        updateWaves(dt);
+        updateWaveBreak(dt);
+        updateTurrets(dt);
+      }
       updateDrops(dt);
       updateAmmo(dt);
-      updateWaves(dt);
-      updateWaveBreak(dt);
-      updateTurrets(dt);
       updatePlacementPreview();
       updateViewModel(dt);
       updateTopUI();
+      updateBossArrow();
     } else {
       // 暂停/死亡时也让画面稳定
       updateViewModel(dt);
     }
+    if (NET.mode === 'host') netTickHost(dt);
+    else if (NET.mode === 'client') netTickClient(dt);
     updateTracers(dt);
     updateParticles(dt);
     updateDamageNums(dt);
@@ -4889,10 +5388,16 @@ function updateViewModel(dt){
 
       rx += -recoil*2.2*(1 - adsk*0.55);
       py += recoil*0.6; pz += recoil*1.1;
+      // 换弹分段动作：0-0.28 枪身侧翻下沉（卸旧匣）→ 保持 → 0.60-0.90 回正；0.64-0.78 拉枪栓后顿
+      m.__reloadRp = -1;
       if (ammo[k] && ammo[k].reloading > 0){
         const rp = clamp(1 - ammo[k].reloading / w.reload, 0, 1);
-        const dip = Math.sin(rp * Math.PI);
-        py -= dip*0.22; rx += dip*0.75; rz += dip*0.30;
+        m.__reloadRp = rp;
+        const seg = (a,b) => clamp((rp-a)/(b-a), 0, 1);
+        const env = seg(0,0.28) * (1 - seg(0.60,0.90));
+        py -= env*0.20; rx += env*0.52; rz -= env*0.46; px += env*0.045;
+        const rackK = Math.sin(seg(0.64,0.78)*Math.PI);   // 末段拉枪栓上膛
+        pz += rackK*0.07; py += rackK*0.015;
       }
     }
 
@@ -4900,6 +5405,39 @@ function updateViewModel(dt){
     m.rotation.set(rx, ry, rz);
     m.scale.setScalar(sc);
   }
+
+  // 当前手持枪械换弹时：旧弹匣掉落 + 新弹匣抬起上膛
+  if (it.kind === 'weapon' && ammo[it.id] && ammo[it.id].reloading > 0){
+    const mm = models[it.id];
+    const rp = mm.__reloadRp;
+    const wv = WEAPONS[it.id];
+    const scoped = !!(isGun(wv) && wv.scope && adsT > 0.55);
+    if (rp >= 0 && !scoped && it.id !== 'rocket'){
+      const seg = (a,b) => clamp((rp-a)/(b-a), 0, 1);
+      const sc = mm.scale.x;
+      const mx = mm.position.x, my = mm.position.y - 0.14*sc, mz = mm.position.z + 0.05*sc;
+      const u1 = seg(0,0.34);
+      rldMagOld.visible = u1 < 1;
+      if (u1 < 1){
+        rldMagOld.position.set(mx + 0.05*u1, my - u1*u1*0.55, mz + 0.10*u1);
+        rldMagOld.rotation.set(u1*2.4, 0, 0.3*u1);
+        rldMagOld.scale.setScalar(sc);
+      }
+      const u2 = seg(0.32,0.62);
+      rldMagNew.visible = u2 > 0 && u2 < 1;
+      if (u2 > 0 && u2 < 1){
+        const e2 = u2*u2*(3-2*u2);
+        rldMagNew.position.set(mx, my - 0.42*sc*(1-e2), mz + 0.10*(1-e2));
+        rldMagNew.rotation.set(0.35*(1-e2), 0, 0);
+        rldMagNew.scale.setScalar(sc);
+      }
+      if (!rldSfxSeat && u2 >= 1){ rldSfxSeat = true; SFX.magSeat(); }
+      if (!rldSfxRack && rp >= 0.68){ rldSfxRack = true; SFX.rack(); }
+    } else hideReloadMags();
+  } else hideReloadMags();
+
+  // 英雄皮肤特效动画
+  tickSkinFx(dt);
 
   // 枪口火焰计时
   if (flashT > 0){
@@ -4921,8 +5459,821 @@ function updateViewModel(dt){
 }
 
 /* =========================================================================
-   20. 启动
+   20. 局域网联机实现（主机权威 + 快照插值）
+   协议：
+     客户端→服务器: {t:'host'} / {t:'join',name}
+     服务器→客户端: {t:'role',r,id} / {t:'s',k}  系统事件
+     主机→队友: init / snap / ev / dmg / respawned（可直接或经 to 定向）
+     队友→主机: 服务器包装为 {t:'c',id,m} → st/shoot/melee/nade/rocket/
+                take/dig/place/turret/respawn/bye
    ========================================================================= */
+const r2n = n => Math.round(n * 100) / 100;
+
+function netUrl(){ return 'ws://' + location.host + '/ws'; }
+function netSend(m){ if (NET.ws && NET.ws.readyState === 1) NET.ws.send(JSON.stringify(m)); }
+function netBroadcast(m){ netSend(m); }                       // 主机 → 全体队友
+function netSendTo(cid, m){ netSend({ t:'c', to:cid, m }); }  // 主机 → 指定队友
+
+function netOpen(afterOpen){
+  try { NET.ws = new WebSocket(netUrl()); }
+  catch(e){ toastMsg('无法建立连接'); NET.mode = 'off'; return; }
+  NET.ws.onopen = afterOpen;
+  NET.ws.onmessage = e => {
+    let m; try { m = JSON.parse(e.data); } catch(_){ return; }
+    netDispatch(m);
+  };
+  NET.ws.onclose = () => {
+    clearInterval(NET._hb);
+    if (NET.mode === 'off') return;
+    const wasClient = NET.mode === 'client';
+    NET.mode = 'off';
+    toastMsg(wasClient ? '与主机失去连接，即将刷新' : '联机服务已断开，即将刷新');
+    setTimeout(() => location.reload(), 1400);
+  };
+  NET.ws.onerror = () => {};
+  clearInterval(NET._hb);                       // 应用层心跳：防半开连接占用服务器房间
+  NET._hb = setInterval(() => netSend({ t:'ping' }), 20000);
+}
+
+function netDispatch(m){
+  switch (m.t){
+    case 'role':
+      if (m.r === 'host'){ NET.myId = 'H'; onHostReady(); }
+      else NET.myId = m.id;
+      break;
+    case 'c':                                   // 主机收到队友消息
+      if (NET.mode === 'host') netHostMsg(m.m, m.id);
+      break;
+    case 's':
+      if (m.k === 'hostGone'){ toastMsg('主机已退出，即将刷新'); setTimeout(() => location.reload(), 1400); }
+      else if (m.k === 'nohost'){ toastMsg('暂无主机，请让房主先点「创建队伍」'); NET.mode = 'off'; }
+      else if (m.k === 'full'){ toastMsg('已有主机在本局中'); NET.mode = 'off'; }
+      break;
+    default:
+      if (NET.mode === 'client') netClientMsg(m);
+  }
+}
+
+function setCoopStatus(txt){
+  const chip = document.getElementById('coopChip');
+  const el = document.getElementById('coopTxt');
+  if (el) el.textContent = txt;
+  if (chip) chip.classList.remove('hidden');
+}
+
+/* ---------------- 主机流程 ---------------- */
+function netStartHost(){
+  NET.mode = 'host';
+  setCoopStatus('主机 · 连接中…');
+  netOpen(() => netSend({ t:'host' }));
+}
+function onHostReady(){
+  NET.track = true;          // 开始记录方块变更（generateWorld 已完成，不会误记）
+  startGame();
+  setCoopStatus('主机 · 等待队友加入');
+  fetch('/info').then(r => r.json()).then(j => {
+    NET.hostAddr = (j.ips && j.ips[0] ? j.ips[0] : '本机') + ':' + j.port;
+    const el = document.getElementById('coopAddr');
+    if (el) el.textContent = NET.hostAddr;
+  }).catch(() => {});
+}
+
+/* ---------------- 队友流程 ---------------- */
+function netStartJoin(){
+  NET.mode = 'client';
+  setCoopStatus('连接主机中…');
+  netOpen(() => netSend({ t:'join', name:'队友' }));
+}
+
+/* ---------------- 主机：处理队友消息 ---------------- */
+function netHostMsg(m, cid){
+  if (!m || typeof m !== 'object') return;
+  switch (m.t){
+    case 'join': netAddClient(cid, m.name); break;
+    case 'st': {
+      const c = NET.clients[cid];
+      if (c && Array.isArray(m.p)){
+        c.tgt = { x:m.p[0], y:m.p[1], z:m.p[2], yaw:m.p[3] };
+        c.hp = m.p[4]; c.dead = !!m.p[5];
+      }
+      break;
+    }
+    case 'shoot': netHostShoot(m); break;
+    case 'melee': netHostMelee(m); break;
+    case 'nade': {
+      const w = WEAPONS[m.w] || WEAPONS.grenade;
+      const p = new THREE.Vector3(m.o[0], m.o[1], m.o[2]);
+      const vel = new THREE.Vector3(m.v[0], m.v[1], m.v[2]);
+      const g = makeGrenadeMesh(m.w);
+      g.position.copy(p);
+      projectiles.push({ pos:p, vel, fuse:w.fuse, mesh:g, weaponId:m.w,
+        spin:new THREE.Vector3(randi(-8,8), randi(-8,8), randi(-8,8)) });
+      break;
+    }
+    case 'rocket': {
+      const dir = new THREE.Vector3(m.d[0], m.d[1], m.d[2]);
+      const p = new THREE.Vector3(m.o[0], m.o[1], m.o[2]);
+      const g = makeRocketMesh(dir);
+      g.position.copy(p);
+      g.lookAt(p.clone().add(dir));
+      projectiles.push({ pos:p, vel:dir.clone().multiplyScalar(60), fuse:4.0,
+        mesh:g, weaponId:'rocket', spin:new THREE.Vector3(), rocket:true, flame:g.__flame });
+      break;
+    }
+    case 'take': {
+      const idx = drops.findIndex(dd => dd.nid === m.id);
+      if (idx >= 0){
+        const d = drops[idx], c = NET.clients[cid];
+        const px = c && c.tgt ? c.tgt.x : 1e9, pz = c && c.tgt ? c.tgt.z : 1e9;
+        if (Math.hypot(px - d.pos.x, pz - d.pos.z) < 3.4){ scene.remove(d.mesh); drops.splice(idx, 1); }
+      }
+      break;
+    }
+    case 'dig':   setB(m.x, m.y, m.z, AIR); markDirtyAt(m.x, m.y, m.z); break;
+    case 'place': setB(m.x, m.y, m.z, m.id); markDirtyAt(m.x, m.y, m.z); break;
+    case 'turret': {
+      if (turrets.length >= TURRET.max) break;
+      const mv = makeTurretMesh();
+      mv.g.position.set(m.x, m.y, m.z);
+      scene.add(mv.g);
+      turrets.push({ g:mv.g, head:mv.head, pitch:mv.pitch, radarPiv:mv.radarPiv,
+        base:new THREE.Vector3(m.x+0.5, m.y+0.7, m.z+0.5), cd:0, scanT:0, target:null, yaw:0, elev:0 });
+      burst(new THREE.Vector3(m.x+0.5, m.y+0.4, m.z+0.5), 20, 0x53f2ff, 2.6, 0.1, 0.75);
+      break;
+    }
+    case 'respawn': netSendTo(cid, { t:'respawned' }); break;
+    case 'bye': netRemoveClient(cid); break;
+  }
+}
+
+function netAddClient(cid, name){
+  NET.clients[cid] = { name: name || '队友', tgt:null, hp:100, dead:false };
+  netEnsurePeer(cid, name || '队友');
+  setCoopStatus(`主机 · ${Object.keys(NET.clients).length} 名队友`);
+  showToast('联机', name || '队友', '加入了战局');
+  // 让新队友立即拿到当前战局
+  netSendTo(cid, { t:'init', wv:[state.wave, state.waveActive ? 1 : 0, state.toSpawn, state.waveBreak > 0 ? 1 : 0] });
+}
+function netRemoveClient(cid){
+  delete NET.clients[cid];
+  netRemovePeer(cid);
+  setCoopStatus(`主机 · ${Object.keys(NET.clients).length} 名队友`);
+}
+
+function netHostShoot(m){
+  const w = WEAPONS[m.w] || WEAPONS.pistol;
+  if (SFX[w.snd]) SFX[w.snd]();          // 听到队友开枪
+  const o = new THREE.Vector3(m.o[0], m.o[1], m.o[2]);
+  for (const d of m.ds){
+    const dir = new THREE.Vector3(d[0], d[1], d[2]);
+    let bestZ = null, bestT = Infinity;
+    for (const z0 of zombies){
+      if (z0.dead) continue;
+      const t = rayHitsZombie(o, dir, z0, 140);
+      if (t !== null && t < bestT){ bestT = t; bestZ = z0; }
+    }
+    const vox = raycastVoxel(o, dir, 140);
+    const voxT = vox ? vox.dist : Infinity;
+    if (bestZ && bestT < voxT){
+      const p = o.clone().addScaledVector(dir, bestT);
+      const hs = p.y >= bestZ.pos.y + bestZ.height * 0.72;
+      damageZombie(bestZ, w.damage, dir.clone().setY(0).normalize(), w.knock, m.w, hs);
+    }
+  }
+}
+
+function netHostMelee(m){
+  const w = WEAPONS[m.w] || WEAPONS.pistol;
+  const o = new THREE.Vector3(m.o[0], m.o[1], m.o[2]);
+  const dir = new THREE.Vector3(m.d[0], m.d[1], m.d[2]).normalize();
+  for (const z0 of zombies){
+    if (z0.dead) continue;
+    const zh = z0.height;
+    const to = new THREE.Vector3(z0.pos.x, z0.pos.y + zh*0.5, z0.pos.z).sub(o);
+    const dist = to.length();
+    if (dist > w.range) continue;
+    to.normalize();
+    if (to.dot(dir) < Math.cos(w.arc)) continue;
+    const hitY = o.y + dir.y * dist;
+    const hs = hitY >= z0.pos.y + zh * 0.72;
+    damageZombie(z0, w.damage, to.clone().setY(0).normalize(), w.knock, m.w, hs);
+  }
+}
+
+/* ---------------- 主机：快照 ---------------- */
+function netBuildSnap(){
+  const zs = [];
+  for (const z0 of zombies){
+    if (z0.dead && z0.deadT > 1.15) continue;      // 即将移除的不发
+    zs.push([z0.zid, r2n(z0.pos.x), r2n(z0.pos.y), r2n(z0.pos.z),
+             r2n(z0.part.group.rotation.y), Math.max(0, Math.round(z0.hp)), z0.vkey, z0.dead ? 1 : 0]);
+  }
+  const ds = [];
+  for (const d of drops)
+    ds.push([d.nid, d.type, r2n(d.pos.x), r2n(d.pos.y), r2n(d.pos.z), d.type === 'attach' ? d.payload : 0]);
+  const ts = [];
+  for (const t of turrets) ts.push([r2n(t.base.x - 0.5), r2n(t.base.y - 0.7), r2n(t.base.z - 0.5)]);
+  const pj = [];
+  for (const p of projectiles)
+    pj.push([r2n(p.pos.x), r2n(p.pos.y), r2n(p.pos.z), p.weaponId === 'rocket' ? 1 : (p.weaponId === 'hegrenade' ? 2 : 0)]);
+  const bp = [];
+  for (const p of bossProjectiles) bp.push([r2n(p.pos.x), r2n(p.pos.y), r2n(p.pos.z)]);
+  const ps = [['H', r2n(player.pos.x), r2n(player.pos.y), r2n(player.pos.z),
+               r2n(player.yaw), Math.max(0, Math.ceil(player.health)), '主机']];
+  for (const cid in NET.clients){
+    const c = NET.clients[cid];
+    if (!c.tgt) continue;
+    ps.push([cid, r2n(c.tgt.x), r2n(c.tgt.y), r2n(c.tgt.z), r2n(c.tgt.yaw || 0),
+             Math.max(0, c.hp | 0), c.name]);
+  }
+  const wv = [state.wave, state.waveActive ? 1 : 0, state.toSpawn, state.waveBreak > 0 ? 1 : 0];
+  const bb = (state.boss && !state.boss.dead)
+    ? [Math.max(0, Math.round(state.boss.hp)), state.boss.maxHp, Math.round(state.boss.damage * 1.6)] : 0;
+  const snap = { t:'snap', wv, zs, ds, ts, pj, bp, ps, bb };
+  if (NET.diffs.length) snap.df = NET.diffs.splice(0, NET.diffs.length);
+  return snap;
+}
+
+function netTickHost(dt){
+  if (!Object.keys(NET.clients).length) return;
+  if (state.mode !== 'play') return;
+  NET.snapT -= dt;
+  if (NET.snapT > 0) return;
+  NET.snapT = 1 / 12;
+  netSend(netBuildSnap());
+}
+
+/* ---------------- 队友：主机消息 ---------------- */
+function netClientMsg(m){
+  switch (m.t){
+    case 'init': netApplyInit(m); break;
+    case 'snap': netApplySnap(m); break;
+    case 'dmg':  hurtPlayer(m.v, null); break;
+    case 'ev':   netClientEvent(m); break;
+  }
+}
+
+function netClientEvent(m){
+  switch (m.k){
+    case 'wave':
+      state.wave = m.n;
+      showBanner(`第 ${m.n} 波`, m.n % 5 === 0 ? 'BOSS 巨兽来袭！' : '丧尸来袭');
+      SFX.wave(); updateTopUI();
+      break;
+    case 'shot': {
+      const from = new THREE.Vector3(m.o[0], m.o[1], m.o[2]);
+      const dir = new THREE.Vector3(m.d[0], m.d[1], m.d[2]);
+      const to = from.clone().addScaledVector(dir, m.ds || 140);
+      showTracer(from, to);
+      const w = WEAPONS[m.w];
+      if (w && SFX[w.snd]) SFX[w.snd]();
+      break;
+    }
+    case 'boom': {
+      const p = new THREE.Vector3(m.p[0], m.p[1], m.p[2]);
+      SFX.explode();
+      addShake(m.rk ? 0.6 : 0.4, m.rk ? 0.32 : 0.16);
+      burst(p, m.rk ? 90 : 60, 0xffb04a, m.rk ? 12 : 9, 0.16, 0.9, 1.4);
+      burst(p, m.rk ? 46 : 30, 0x333333, 5, 0.24, 1.5, 0.8);
+      const bl = new THREE.PointLight(m.rk ? 0xff7a30 : 0xffa040, m.rk ? 11 : 7, m.rk ? 30 : 20, 2);
+      bl.position.copy(p); scene.add(bl);
+      const t0 = performance.now();
+      const fade = () => {
+        const k = 1 - (performance.now() - t0) / (m.rk ? 380 : 280);
+        if (k <= 0){ scene.remove(bl); return; }
+        bl.intensity = (m.rk ? 11 : 7) * k;
+        requestAnimationFrame(fade);
+      };
+      requestAnimationFrame(fade);
+      break;
+    }
+    case 'gas': {
+      const mesh = new THREE.Mesh(GAS_GEO, GAS_MAT.clone());
+      const pos = new THREE.Vector3(m.p[0], m.p[1], m.p[2]);
+      mesh.position.copy(pos);
+      mesh.scale.setScalar(m.r);
+      scene.add(mesh);
+      NET.cGases.push({ pos, radius:m.r, dps:m.dps || 16, t:m.tm || 6.5, mesh, cd:0 });
+      break;
+    }
+    case 'kill':
+      addKillFeed(m.w, { variant:{ label:(ZVARIANTS[m.v] || ZVARIANTS.walker).label } });
+      if (m.boss) unlockRandomSkin();
+      break;
+    case 'ts': {
+      const from = new THREE.Vector3(m.f[0], m.f[1], m.f[2]);
+      const to = new THREE.Vector3(m.p[0], m.p[1], m.p[2]);
+      showTracer(from, to);
+      burst(to, 4, 0x53f2ff, 1.8, 0.07, 0.35);
+      SFX.turret();
+      break;
+    }
+  }
+}
+
+function netApplyInit(m){
+  netClearWorld();
+  state.wave = m.wv[0];
+  state.waveActive = !!m.wv[1];
+  state.toSpawn = m.wv[2];
+  state.waveBreak = 0;
+  resetPlayer();
+  player.health = player.maxHealth;
+  player.armor = 0;
+  for (const id of GUN_IDS){
+    ammo[id].mag = WEAPONS[id].mag;
+    ammo[id].reserve = AMMO_START[id];
+    ammo[id].reloading = 0;
+  }
+  ammo.rocket.mag = 0; ammo.rocket.reserve = 0; ammo.rocket.reloading = 0;
+  ammo.hegrenade.count = 0;
+  updateHealthUI(); updateAmmoUI(); updateTopUI();
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('deadScreen').classList.add('hidden');
+  document.getElementById('pauseScreen').classList.add('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+  state.mode = 'play';
+  setCoopStatus('队友 · 已加入战局');
+  requestLock();
+  showToast('联机', '已加入战局', '与队友并肩作战');
+}
+
+function netClientRespawn(){
+  netClearWorld();
+  resetPlayer();
+  player.health = player.maxHealth;
+  player.armor = 0;
+  player.hurtT = 0;
+  for (const id of GUN_IDS){
+    ammo[id].mag = WEAPONS[id].mag;
+    ammo[id].reserve = Math.max(ammo[id].reserve, Math.floor(AMMO_START[id] * 0.5));
+    ammo[id].reloading = 0;
+  }
+  updateHealthUI(); updateAmmoUI();
+  document.getElementById('deadScreen').classList.add('hidden');
+  document.getElementById('pauseScreen').classList.add('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+  state.mode = 'play';
+  requestLock();
+  showToast('联机', '重新加入战局', '注意周围的丧尸');
+}
+
+function netClearWorld(){
+  for (const r of NET.zrepArr) scene.remove(r.part.group);
+  NET.zrep.clear(); NET.zrepArr.length = 0;
+  for (const d of drops) scene.remove(d.mesh);
+  drops.length = 0;
+  for (const g of NET.cGases) scene.remove(g.mesh);
+  NET.cGases.length = 0;
+  for (const v of NET.cProj) scene.remove(v.mesh);
+  NET.cProj.length = 0;
+  for (const v of NET.cBossProj) scene.remove(v.mesh);
+  NET.cBossProj.length = 0;
+  for (const tv of NET.turretViews) scene.remove(tv.g);
+  NET.turretViews.length = 0;
+  hideBossBar();
+  state.boss = null;
+}
+
+/* ---------------- 队友：应用快照 ---------------- */
+function netApplySnap(m){
+  state.wave = m.wv[0];
+  state.waveActive = !!m.wv[1];
+  state.toSpawn = m.wv[2];
+  // 方块差异（爆炸/挖土/放置）
+  if (m.df){
+    for (let i = 0; i < m.df.length; i += 4){
+      setB(m.df[i], m.df[i+1], m.df[i+2], m.df[i+3]);
+      markDirtyAt(m.df[i], m.df[i+1], m.df[i+2]);
+    }
+  }
+  // ---- 丧尸 ----
+  const seen = new Set();
+  for (const a of m.zs){
+    const zid = a[0];
+    seen.add(zid);
+    let r = NET.zrep.get(zid);
+    if (!r) r = netMakeZrep(zid, a[6], a[1], a[2], a[3]);
+    r.tgt.x = a[1]; r.tgt.y = a[2]; r.tgt.z = a[3]; r.tgt.yaw = a[4];
+    r.hp = a[5];
+    if (a[7] && !r.dead){ r.dead = true; r.deadT = 0; }
+  }
+  for (const zid of Array.from(NET.zrep.keys())){
+    if (!seen.has(zid)) netRemoveZrep(zid);
+  }
+  // ---- 掉落 ----
+  const seenD = new Set();
+  for (const a of m.ds){
+    seenD.add(a[0]);
+    if (!drops.some(dd => dd.nid === a[0])) netSpawnDrop(a[1], a[5], a[2], a[3], a[4], a[0]);
+  }
+  for (let i = drops.length - 1; i >= 0; i--){
+    if (!seenD.has(drops[i].nid)){ scene.remove(drops[i].mesh); drops.splice(i, 1); }
+  }
+  // ---- 炮塔 ----
+  while (NET.turretViews.length < m.ts.length){
+    const a = m.ts[NET.turretViews.length];
+    const mv = makeTurretMesh();
+    mv.g.position.set(a[0], a[1], a[2]);
+    scene.add(mv.g);
+    NET.turretViews.push({ g:mv.g, radarPiv:mv.radarPiv });
+  }
+  while (NET.turretViews.length > m.ts.length){
+    const tv = NET.turretViews.pop();
+    if (tv) scene.remove(tv.g);
+  }
+  // ---- 投掷物 / BOSS 能量弹 ----
+  netSyncProjectiles(m.pj);
+  netSyncBossProjs(m.bp);
+  // ---- 玩家 ----
+  const seenP = new Set();
+  for (const a of m.ps){
+    const cid = a[0];
+    if (cid === NET.myId) continue;
+    seenP.add(cid);
+    const p = netEnsurePeer(cid, a[6]);
+    p.tgt = { x:a[1], y:a[2], z:a[3], yaw:a[4] };
+    p.hp = a[5];
+  }
+  for (const cid of Object.keys(NET.peers)){
+    if (!seenP.has(cid)) netRemovePeer(cid);
+  }
+  // ---- BOSS ----
+  if (m.bb){
+    NET.bossDmg = m.bb[2] || 40;
+    let bossRep = null;
+    for (const r of NET.zrepArr){ if (r.v.boss && !r.dead){ bossRep = r; break; } }
+    if (bossRep){
+      state.boss = bossRep;
+      bossRep.maxHp = m.bb[1];
+      bossRep.hp = m.bb[0];
+      updateBossBar(bossRep);
+    }
+  } else if (state.boss){
+    state.boss = null;
+    hideBossBar();
+  }
+  updateTopUI();
+}
+
+function netMakeZrep(zid, vk, x, y, z){
+  const v = ZVARIANTS[vk] || ZVARIANTS.walker;
+  const part = makeZombieMesh(v);
+  part.group.position.set(x, y, z);
+  scene.add(part.group);
+  const r = { zid, v, part,
+    pos: new THREE.Vector3(x, y, z),
+    cur: { x, y, z, yaw: 0 }, tgt: { x, y, z, yaw: 0 },
+    hp: 1, maxHp: 1, dead: false, deadT: 0,
+    anim: Math.random() * 10,
+    height: v.height, radius: v.radius, variant: v };
+  NET.zrep.set(zid, r);
+  NET.zrepArr.push(r);
+  return r;
+}
+function netRemoveZrep(zid){
+  const r = NET.zrep.get(zid);
+  if (!r) return;
+  scene.remove(r.part.group);
+  NET.zrep.delete(zid);
+  const i = NET.zrepArr.indexOf(r);
+  if (i >= 0) NET.zrepArr.splice(i, 1);
+  if (state.boss === r){ state.boss = null; hideBossBar(); }
+}
+
+function netSpawnDrop(type, payload, x, y, z, nid){
+  if (!DROP_MATS[type] || drops.length >= MAX_DROPS) return;
+  const mesh = new THREE.Mesh(DROP_GEO, DROP_MATS[type]);
+  const pos = new THREE.Vector3(x, y, z);
+  mesh.position.copy(pos);
+  const halo = new THREE.Mesh(DROP_HALO_GEO, DROP_HALO_MATS[type]);
+  mesh.add(halo);
+  scene.add(mesh);
+  drops.push({ nid, type, payload: payload || null, pos, t: Math.random()*6.28, life: DROP_LIFE, mesh, halo });
+}
+
+function netSyncProjectiles(pj){
+  while (NET.cProj.length > pj.length){ const v = NET.cProj.pop(); if (v) scene.remove(v.mesh); }
+  for (let i = 0; i < pj.length; i++){
+    const a = pj[i];
+    let v = NET.cProj[i];
+    if (!v){
+      let mesh;
+      if (a[3] === 1) mesh = new THREE.Mesh(ROCKET_GEO, ROCKET_MAT);
+      else mesh = new THREE.Mesh(PG_GEO, a[3] === 2 ? new THREE.MeshLambertMaterial({ color:0x6a2a2a }) : PG_MAT);
+      scene.add(mesh);
+      v = { mesh };
+      NET.cProj.push(v);
+    }
+    v.mesh.position.set(a[0], a[1], a[2]);
+  }
+}
+
+function netSyncBossProjs(bp){
+  while (NET.cBossProj.length > bp.length){ const v = NET.cBossProj.pop(); if (v) scene.remove(v.mesh); }
+  for (let i = 0; i < bp.length; i++){
+    const a = bp[i];
+    let v = NET.cBossProj[i];
+    if (!v){
+      const mesh = new THREE.Mesh(BOSS_PROJ_GEO, new THREE.MeshBasicMaterial({ color:0xff3a2a }));
+      scene.add(mesh);
+      v = { mesh };
+      NET.cBossProj.push(v);
+    }
+    v.mesh.position.set(a[0], a[1], a[2]);
+    // 队友被 BOSS 能量弹命中（主机只判自己，这里补队友判定）
+    const dx = player.pos.x - a[0], dy = player.pos.y + 0.9 - a[1], dz = player.pos.z - a[2];
+    if (dx*dx + dy*dy + dz*dz < 0.5){
+      hurtPlayer(NET.bossDmg, null);
+      burst(new THREE.Vector3(a[0], a[1], a[2]), 14, 0xff5a2a, 4, 0.1, 0.5);
+      scene.remove(v.mesh);
+      NET.cBossProj.splice(i, 1);
+      break;
+    }
+  }
+}
+
+/* ---------------- 队友：本地射击 / 近战（表现 + 上报） ---------------- */
+function netTryShoot(id){
+  const w = WEAPONS[id], a = ammo[id];
+  if (a.reloading > 0 || attackCd > 0) return;
+  if (a.mag <= 0){ SFX.empty(); attackCd = 0.3; startReload(id); return; }
+  attackCd = w.cooldown;
+  a.mag--; updateAmmoUI();
+
+  const spreadMul = lerp(1, w.adsSpread || 0.3, adsT);
+  const kickMul   = lerp(1, 0.55, adsT);
+  const pellets   = w.pellets || 1;
+
+  flashT = 0.05;
+  applyMuzzleSkin(id);
+  muzzleFlash.visible = true;
+  models[id].updateMatrix();
+  const mzLocal = w.tip.clone().applyMatrix4(models[id].matrix);
+  muzzleFlash.position.copy(mzLocal);
+  muzzleFlash.rotation.z = Math.random()*Math.PI;
+  muzzleFlash.scale.setScalar(randi(0.8, 1.4) * (pellets > 1 ? 1.7 : 1));
+  muzzleLight.intensity = 3;
+  muzzleLight.position.copy(mzLocal).add(viewModel.position);
+  if (SFX[w.snd]) SFX[w.snd]();
+
+  const origin = camera.position.clone();
+  const muzzle = getMuzzleWorld();
+  const dirs = [];
+  for (let pi = 0; pi < pellets; pi++){
+    const dir = new THREE.Vector3();
+    camera.getWorldDirection(dir);
+    const sp = w.spread * spreadMul;
+    dir.x += randi(-1,1)*sp; dir.y += randi(-1,1)*sp; dir.z += randi(-1,1)*sp;
+    dir.normalize();
+    // 本地命中表现（打的是插值镜像，判定以主机为准）
+    let bestZ = null, bestT = Infinity;
+    for (const r of NET.zrepArr){
+      if (r.dead) continue;
+      const t = rayHitsZombie(origin, dir, r, 140);
+      if (t !== null && t < bestT){ bestT = t; bestZ = r; }
+    }
+    const vox = raycastVoxel(origin, dir, 140);
+    const voxT = vox ? vox.dist : Infinity;
+    if (bestZ && bestT < voxT){
+      const p = origin.clone().addScaledVector(dir, bestT);
+      const hs = p.y >= bestZ.pos.y + bestZ.height * 0.72;
+      burst(p, 8, hs ? 0xffd24a : 0x7a1414, 3.2, 0.11, 0.75);
+      spawnDamageNum(p, w.damage, false, hs);
+      showHitmark();
+      if (pi === 0) showTracer(muzzle, p);
+    } else if (vox && voxT < 140){
+      const p = origin.clone().addScaledVector(dir, voxT);
+      if (pi === 0) showTracer(muzzle, p);
+      const n = new THREE.Vector3(vox.nx, vox.ny, vox.nz);
+      burst(p.clone().addScaledVector(n, 0.05), pellets > 1 ? 3 : 6, 0xbbb2a0, 2.4, 0.07, 0.4);
+    } else if (pi === 0){
+      showTracer(muzzle, origin.clone().addScaledVector(dir, 140));
+    }
+    dirs.push([+dir.x.toFixed(3), +dir.y.toFixed(3), +dir.z.toFixed(3)]);
+  }
+  netSend({ t:'shoot', o:[+origin.x.toFixed(2), +origin.y.toFixed(2), +origin.z.toFixed(2)], ds:dirs, w:id });
+
+  recoil += w.recoil * kickMul;
+  player.pitch = clamp(player.pitch + w.recoil * 1.4 * kickMul, -1.55, 1.55);
+}
+
+function netMelee(id){
+  const w = WEAPONS[id];
+  if (attackCd > 0) return;
+  attackCd = w.cooldown;
+  swingId = id;
+  swingT = w.adur;
+  SFX.swing();
+  const dir = new THREE.Vector3();
+  camera.getWorldDirection(dir);
+  const eye = camera.position.clone();
+  for (const r of NET.zrepArr){
+    if (r.dead) continue;
+    const zh = r.height;
+    const to = new THREE.Vector3(r.pos.x, r.pos.y + zh*0.5, r.pos.z).sub(eye);
+    const dist = to.length();
+    if (dist > w.range) continue;
+    to.normalize();
+    if (to.dot(dir) < Math.cos(w.arc)) continue;
+    burst(new THREE.Vector3(r.pos.x, r.pos.y + zh*0.5, r.pos.z), 8, 0x7a1414, 3.0, 0.1, 0.7);
+    showHitmark();
+  }
+  netSend({ t:'melee', o:[+eye.x.toFixed(2), +eye.y.toFixed(2), +eye.z.toFixed(2)],
+            d:[+dir.x.toFixed(3), +dir.y.toFixed(3), +dir.z.toFixed(3)], w:id });
+}
+
+/* ---------------- 丧尸目标选择（主机） ---------------- */
+function netTargetFor(fromPos){
+  if (NET.mode !== 'host') return { pos: player.pos, cid: null };
+  let bp = player.pos, bcid = null;
+  let bd = (fromPos.x-player.pos.x)**2 + (fromPos.y-player.pos.y)**2 + (fromPos.z-player.pos.z)**2;
+  for (const cid in NET.clients){
+    const c = NET.clients[cid];
+    if (!c.tgt || c.dead) continue;
+    const d = (fromPos.x-c.tgt.x)**2 + (fromPos.y-c.tgt.y)**2 + (fromPos.z-c.tgt.z)**2;
+    if (d < bd){ bd = d; bcid = cid; }
+  }
+  if (bcid){
+    const c = NET.clients[bcid];
+    if (!NET._tp) NET._tp = new THREE.Vector3();
+    NET._tp.set(c.tgt.x, c.tgt.y, c.tgt.z);
+    bp = NET._tp;
+  }
+  return { pos: bp, cid: bcid };
+}
+function netHitTarget(tgt, z0){
+  if (!tgt.cid) hurtPlayer(z0.damage, z0);
+  else netSendTo(tgt.cid, { t:'dmg', v: z0.damage });
+}
+
+/* ---------------- 远端玩家模型 ---------------- */
+function makeNameSprite(name){
+  const cv = document.createElement('canvas');
+  cv.width = 256; cv.height = 64;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = 'rgba(8,12,22,0.66)';
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(4, 8, 248, 46, 14) : ctx.rect(4, 8, 248, 46);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(120,200,255,0.7)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#dff2ff';
+  ctx.font = 'bold 28px "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(name, 128, 32);
+  const tex = new THREE.CanvasTexture(cv);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true, depthTest:false }));
+  sp.scale.set(1.5, 0.38, 1);
+  sp.position.y = 2.18;
+  return sp;
+}
+
+function makePlayerMesh(accentHex){
+  const accent = new THREE.MeshBasicMaterial({ color: accentHex });
+  const g = new THREE.Group();
+  const mk = (w,h,d,mat,x,y,z) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+    m.position.set(x,y,z);
+    m.castShadow = true;
+    g.add(m);
+    return m;
+  };
+  mk(0.62, 0.78, 0.36, MAT_NANO, 0, 1.08, 0);          // 躯干
+  mk(0.64, 0.10, 0.38, accent, 0, 1.30, 0);            // 能量条纹
+  mk(0.40, 0.40, 0.40, MAT_DARK, 0, 1.70, 0);          // 头盔
+  mk(0.34, 0.12, 0.06, accent, 0, 1.74, -0.20);        // 目镜
+  const legL = mk(0.22, 0.62, 0.24, MAT_DARK, -0.16, 0.34, 0);
+  const legR = mk(0.22, 0.62, 0.24, MAT_DARK,  0.16, 0.34, 0);
+  const armL = mk(0.16, 0.60, 0.18, MAT_NANO, -0.42, 1.10, 0);
+  const armR = mk(0.16, 0.60, 0.18, MAT_NANO,  0.42, 1.10, 0);
+  armL.geometry.translate(0, -0.26, 0); armL.position.y = 1.38;
+  armR.geometry.translate(0, -0.26, 0); armR.position.y = 1.38;
+  mk(0.10, 0.14, 0.70, MAT_GUN, 0.42, 1.02, -0.34);    // 枪
+  mk(0.12, 0.05, 0.12, accent, 0.42, 1.02, -0.66);     // 枪口能量点
+  return { group:g, legL, legR, armL, armR };
+}
+
+function netEnsurePeer(cid, name){
+  let p = NET.peers[cid];
+  if (!p){
+    const isHost = cid === 'H';
+    const part = makePlayerMesh(isHost ? 0x53f2ff : 0xc06bff);
+    const label = makeNameSprite(name || (isHost ? '主机' : '队友'));
+    part.group.add(label);
+    part.group.position.set(0, -100, 0);
+    scene.add(part.group);
+    p = { part, label, cur:new THREE.Vector3(0,-100,0), curYaw:0, tgt:null,
+          name:name || (isHost ? '主机' : '队友'), anim:0, lastX:0, lastZ:0, moving:0 };
+    NET.peers[cid] = p;
+  }
+  return p;
+}
+function netRemovePeer(cid){
+  const p = NET.peers[cid];
+  if (!p) return;
+  scene.remove(p.part.group);
+  delete NET.peers[cid];
+}
+
+function netTickPeers(dt){
+  for (const cid in NET.peers){
+    const p = NET.peers[cid];
+    if (!p.tgt) continue;
+    const k = Math.min(1, dt * 12);
+    p.cur.x += (p.tgt.x - p.cur.x) * k;
+    p.cur.y += (p.tgt.y - p.cur.y) * k;
+    p.cur.z += (p.tgt.z - p.cur.z) * k;
+    let dy = ((p.tgt.yaw - p.curYaw + Math.PI) % (Math.PI*2)) - Math.PI;
+    p.curYaw += dy * Math.min(1, dt * 10);
+    p.part.group.position.copy(p.cur);
+    p.part.group.rotation.y = p.curYaw;
+    const sp = Math.hypot(p.cur.x - p.lastX, p.cur.z - p.lastZ) / Math.max(dt, 1e-4);
+    p.lastX = p.cur.x; p.lastZ = p.cur.z;
+    p.moving = lerp(p.moving, Math.min(1, sp / 4), Math.min(1, dt * 8));
+    p.anim += dt * (2 + p.moving * 8);
+    const sw = Math.sin(p.anim) * 0.55 * p.moving;
+    p.part.legL.rotation.x = sw;
+    p.part.legR.rotation.x = -sw;
+    p.part.armL.rotation.x = -sw * 0.7;
+  }
+}
+
+/* ---------------- 队友：每帧（插值 + 状态上报） ---------------- */
+function netTickClient(dt){
+  // 状态上报 15Hz（仅游戏中）
+  if (state.mode === 'play' && !inventoryOpen){
+    NET.stT -= dt;
+    if (NET.stT <= 0){
+      NET.stT = 1 / 15;
+      netSend({ t:'st', p:[r2n(player.pos.x), r2n(player.pos.y), r2n(player.pos.z),
+                r2n(player.yaw), Math.max(0, Math.ceil(player.health)), state.mode === 'dead' ? 1 : 0] });
+    }
+    // 毒雾自伤（伤害判定本地补齐）
+    for (const g of NET.cGases){
+      g.cd -= dt;
+      const pd = Math.hypot(player.pos.x - g.pos.x, player.pos.y + 0.9 - g.pos.y, player.pos.z - g.pos.z);
+      if (pd < g.radius && g.cd <= 0){ g.cd = 0.7; hurtPlayer(g.dps, null); }
+    }
+  }
+  // 丧尸镜像插值 + 动画
+  const k = Math.min(1, dt * 11);
+  for (const r of NET.zrepArr){
+    const t = r.tgt;
+    const mx = t.x - r.cur.x, mz = t.z - r.cur.z;
+    r.cur.x += mx * k; r.cur.y += (t.y - r.cur.y) * k; r.cur.z += mz * k;
+    let dy = ((t.yaw - r.cur.yaw + Math.PI) % (Math.PI*2)) - Math.PI;
+    r.cur.yaw += dy * Math.min(1, dt * 8);
+    r.pos.set(r.cur.x, r.cur.y, r.cur.z);
+    r.part.group.position.copy(r.pos);
+    r.part.group.rotation.y = r.cur.yaw;
+    if (r.dead){
+      r.deadT += dt;
+      const ft = Math.min(1, r.deadT / 0.55);
+      r.part.pivot.rotation.x = -Math.PI/2 * (ft*ft*(3-2*ft));
+      r.part.pivot.position.y = lerp(0, 0.35, ft);
+      if (r.v.fly) r.part.group.position.y -= dt * (5 + r.deadT * 10);
+      continue;
+    }
+    const moving = Math.hypot(mx, mz) > 0.012;
+    r.anim += dt * (1.4 + (moving ? 2.6 : 0.15));
+    const ph = r.anim * r.v.animFreq, swA = Math.sin(ph), amp = r.v.animAmp;
+    if (r.part.legLP){ r.part.legLP.rotation.x = swA * amp; r.part.legRP.rotation.x = -swA * amp; }
+    r.part.armLP.rotation.x = r.v.armPose + Math.sin(ph + 0.6) * (amp * 0.24);
+    if (r.part.armRP) r.part.armRP.rotation.x = r.v.armPose + Math.sin(ph + 2.2) * (amp * 0.24);
+    r.part.torso.position.y = Z_TORSO_Y * r.v.scale + (r.v.dropY || 0) + Math.abs(swA) * 0.035;
+    if (r.v.posture) r.part.pivot.rotation.x = r.v.posture + Math.sin(ph * 0.5) * 0.10;
+    if (r.v.fly){                                    // 飞行尸拍翼
+      const flap = Math.sin(r.anim * 1.4);
+      const wingAng = 0.22 + flap * 0.55;
+      if (r.part.wingL) r.part.wingL.rotation.z = -wingAng;
+      if (r.part.wingR) r.part.wingR.rotation.z = wingAng;
+    }
+  }
+  // 炮塔雷达旋转
+  for (const tv of NET.turretViews) tv.radarPiv.rotation.y += dt * 3.0;
+  // 毒雾寿命
+  for (let i = NET.cGases.length - 1; i >= 0; i--){
+    const g = NET.cGases[i];
+    g.t -= dt;
+    if (g.t <= 0){ scene.remove(g.mesh); NET.cGases.splice(i, 1); continue; }
+    const pul = 1 + Math.sin(performance.now() * 0.004) * 0.04;
+    g.mesh.scale.setScalar(g.radius * pul);
+    g.mesh.material.opacity = 0.24 * Math.max(0, Math.min(1, g.t));
+  }
+  netTickPeers(dt);
+}
+
+/* =========================================================================
+   21. 启动
+   ========================================================================= */
+/* ---------------- 联机启动 ---------------- */
+for (const k in ZVARIANTS) ZVARIANTS[k].key = k;
+document.getElementById('btnCoopHost').addEventListener('click', () => { audio(); netStartHost(); });
+document.getElementById('btnCoopJoin').addEventListener('click', () => { audio(); netStartJoin(); });
+
 generateWorld();
 buildAllChunks();
 buildHotbarUI();
@@ -4962,7 +6313,11 @@ window.__GAME = { scene, camera, player, zombies, state, blocks, getB, setB, WX,
   drops, DROPS, spawnDrop, updateDrops, clearDrops, rollDrop, applyPickup,
   turrets, TURRET, placeTurret, updateTurrets, cycleBuildSlot, previewBox,
   pickDropKind, pickAttachmentId, showToast, toastMsg, updateHealthUI,
-  showBossBar, updateBossBar, hideBossBar,
+  showBossBar, updateBossBar, hideBossBar, updateBossArrow,
+  SKINS, skinOwned, skinEquip, applySkin, restoreSkin, currentSkin, unlockRandomSkin,
+  openSkinPanel, closeSkinPanel, renderSkinPanel, tickSkinFx,
+  NET, netStartHost, netStartJoin, netSend, netUrl, netBuildSnap, netApplySnap,
+  netTickHost, netTickClient, netHostMsg, netClientMsg, netClientEvent,
   get aiming(){ return aiming; }, set aiming(v){ aiming = v; }, get adsT(){ return adsT; } };
 
 })();
