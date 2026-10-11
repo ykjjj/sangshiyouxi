@@ -2,7 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#07080c" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/png" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
 <title>VOXEL ZOMBIE · 方块丧尸生存</title>
 <style>
   :root{
@@ -633,7 +640,22 @@
 <div id="loading"><div class="spin"></div><div>正在生成世界…</div></div>
 
 <!-- three.js（UMD 构建：可直接 file:// 双击打开，无需本地服务器） -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script src="vendor/three.min.js"></script>
+
+<script>
+/* ---- 平台适配：Service Worker 注册 + 嵌入 iframe（4399 等平台）时隐藏局域网联机入口 ---- */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')){
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+if (window.self !== window.top){
+  document.addEventListener('DOMContentLoaded', () => {
+    const row = document.querySelector('.menuRow');
+    const tip = document.querySelector('.netTip');
+    if (row) row.style.display = 'none';
+    if (tip) tip.style.display = 'none';
+  });
+}
+</script>
 
 <script>
 (function(){

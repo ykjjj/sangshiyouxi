@@ -1,0 +1,17 @@
+{
+  "name": "VOXEL ZOMBIE · 方块丧尸生存",
+  "short_name": "方块丧尸",
+  "description": "科幻风体素丧尸生存 FPS：波次防御、建造、防空炮塔与 BOSS 战",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#07080c",
+  "theme_color": "#07080c",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
