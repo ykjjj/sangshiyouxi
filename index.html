@@ -3897,7 +3897,7 @@ function fireBossProjectile(shooter, speed = 18, color = 0xff3a2a, targetPos = n
   mesh.add(light);
   scene.add(mesh);
   bossProjectiles.push({
-    pos: from, vel: dir.multiplyScalar(speed), damage: shooter.damage * 1.6,
+    pos: from, vel: dir.multiplyScalar(speed), damage: shooter.damage * 1.12,
     mesh, from: shooter, fuse: 3.5
   });
   SFX.zombieGrowl();

@@ -1,5 +1,5 @@
 /* Service Worker：离线缓存（游戏为单文件 + 本地 three.js，缓存后可完全离线游玩） */
-const CACHE = 'voxel-zombie-v1';
+const CACHE = 'voxel-zombie-v2';
 const ASSETS = [
   './',
   './index.html',
